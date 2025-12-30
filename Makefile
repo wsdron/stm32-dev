@@ -2,12 +2,13 @@
 
 TARGET := main
 TEST_MODE ?= FALSE
+TEST_SWC ?= simple_modle
 BUILD_TYPE ?= Debug
 CMAKE_PATH := cmake
 CTEST_PATH := ctest
 
 ifeq ($(TEST_MODE), TRUE)
-	BUILD_DIR := build/test
+	BUILD_DIR := build/test/$(TEST_SWC)
 	TOOLCHAIN_FILE := ""
 else
 	BUILD_DIR := build/release

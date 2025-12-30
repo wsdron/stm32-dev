@@ -151,6 +151,6 @@ else()
     # set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
     FetchContent_MakeAvailable(googletest)
     enable_testing()
-    add_subdirectory(test)
+    add_subdirectory(src/modules/simple_module/test)
 
 endif()

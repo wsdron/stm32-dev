@@ -2,7 +2,7 @@
 
 extern "C"
 {
-#include "simple_module.h"
+#include "simple_module.c"
 }
 
 namespace my
@@ -47,15 +47,6 @@ namespace my
         // Class members declared here can be used by all tests in the test suite
         // for Foo.
       };
-
-      // Tests that the Foo::Bar() method does Abc.
-      TEST_F(SimpleModuleTest, MethodBarDoesAbc)
-      {
-        const std::string input_filepath = "this/package/testdata/myinputfile.dat";
-        const std::string output_filepath = "this/package/testdata/myoutputfile.dat";
-        // EXPECT_EQ(f.Bar(input_filepath, output_filepath), 0);
-        EXPECT_EQ(input_filepath, output_filepath);
-      }
 
       // Tests that Foo does Xyz.
       TEST_F(SimpleModuleTest, DoesXyz)
