@@ -13,18 +13,17 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS ON)
 
 set(CPU_PARAMETERS
-    -mcpu=cortex-m4
+    -mcpu=cortex-m3
     -mthumb
-    -mfpu=fpv4-sp-d16
-    -mfloat-abi=softfp)
+    -mfloat-abi=soft)
 
 set(PROJECT_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR})    
 set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
-set(STARTUP_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/src/startup_stm32f407xx.s)
-set(MCU_LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/flash/STM32F407VGTX_FLASH.ld)
+set(STARTUP_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/src/startup_stm32f103xe.s)
+set(MCU_LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/flash/STM32F103XE_FLASH.ld)
 set(CMSIS_PATH ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/CMSIS)
-set(HAL_PATH ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/STM32F4xx_HAL_Driver)
+set(HAL_PATH ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/STM32F1xx_HAL_Driver)
 
 
 # Production build
@@ -35,28 +34,18 @@ if(NOT TEST_MODE)
     file(GLOB_RECURSE PROJECT_SOURCES "${PROJECT_DIR}/*.c")
     #  -------- Include HAL Sources -------- 
     set(HAL_SOURCES
-    ${HAL_PATH}/Src/stm32f4xx_hal_hcd.c 
-    ${HAL_PATH}/Src/stm32f4xx_ll_usb.c
-    ${HAL_PATH}/Src/stm32f4xx_hal_rcc.c 
-    ${HAL_PATH}/Src/stm32f4xx_hal_rcc_ex.c 
-    ${HAL_PATH}/Src/stm32f4xx_hal_flash.c 
-    ${HAL_PATH}/Src/stm32f4xx_hal_flash_ex.c 
-    ${HAL_PATH}/Src/stm32f4xx_hal_flash_ramfunc.c 
-    ${HAL_PATH}/Src/stm32f4xx_hal_gpio.c 
-    ${HAL_PATH}/Src/stm32f4xx_hal_dma_ex.c 
-    ${HAL_PATH}/Src/stm32f4xx_hal_dma.c 
-    ${HAL_PATH}/Src/stm32f4xx_hal_pwr.c 
-    ${HAL_PATH}/Src/stm32f4xx_hal_pwr_ex.c
-    ${HAL_PATH}/Src/stm32f4xx_hal_cortex.c 
-    ${HAL_PATH}/Src/stm32f4xx_hal.c 
-    ${HAL_PATH}/Src/stm32f4xx_hal_exti.c 
-    ${HAL_PATH}/Src/stm32f4xx_hal_i2c.c 
-    ${HAL_PATH}/Src/stm32f4xx_hal_i2c_ex.c 
-    ${HAL_PATH}/Src/stm32f4xx_hal_i2s.c 
-    ${HAL_PATH}/Src/stm32f4xx_hal_i2s_ex.c 
-    ${HAL_PATH}/Src/stm32f4xx_hal_spi.c 
-    ${HAL_PATH}/Src/stm32f4xx_hal_tim.c 
-    ${HAL_PATH}/Src/stm32f4xx_hal_tim_ex.c)
+    ${HAL_PATH}/Src/stm32f1xx_hal_rcc.c 
+    ${HAL_PATH}/Src/stm32f1xx_hal_rcc_ex.c 
+    ${HAL_PATH}/Src/stm32f1xx_hal_flash.c 
+    ${HAL_PATH}/Src/stm32f1xx_hal_flash_ex.c 
+    ${HAL_PATH}/Src/stm32f1xx_hal_gpio.c 
+    ${HAL_PATH}/Src/stm32f1xx_hal_dma.c 
+    ${HAL_PATH}/Src/stm32f1xx_hal_pwr.c 
+    ${HAL_PATH}/Src/stm32f1xx_hal_cortex.c 
+    ${HAL_PATH}/Src/stm32f1xx_hal.c 
+    ${HAL_PATH}/Src/stm32f1xx_hal_exti.c 
+    ${HAL_PATH}/Src/stm32f1xx_hal_tim.c 
+    ${HAL_PATH}/Src/stm32f1xx_hal_tim_ex.c)
 
     #  -------- Create executable --------
     add_executable(${EXECUTABLE}
@@ -70,7 +59,7 @@ if(NOT TEST_MODE)
         ${CMAKE_CURRENT_SOURCE_DIR}/src/modules/simple_module
         ${HAL_PATH}/Inc
         ${HAL_PATH}/Inc/Legacy
-        ${CMSIS_PATH}/Device/ST/STM32F4xx/Include
+        ${CMSIS_PATH}/Device/ST/STM32F1xx/Include
         ${CMSIS_PATH}/Include)
 
     #  -------- Compilation configuration --------
@@ -78,7 +67,7 @@ if(NOT TEST_MODE)
         target_compile_options(${EXECUTABLE} PRIVATE
             ${CPU_PARAMETERS}
                 -DUSE_HAL_DRIVER 
-                -DSTM32F407xx
+                -DSTM32F103xE
                 -std=gnu11
                 -Wall
                 -Wextra
@@ -104,7 +93,7 @@ if(NOT TEST_MODE)
         target_compile_options(${EXECUTABLE} PRIVATE
         ${CPU_PARAMETERS}
             -DUSE_HAL_DRIVER 
-            -DSTM32F407xx
+            -DSTM32F103xE
             -std=gnu11
             -Wall
             -Wextra

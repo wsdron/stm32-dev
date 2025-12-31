@@ -1,6 +1,6 @@
-#include "stm32f4xx.h"
+#include "stm32f1xx.h"
 #include "simple_module.h"
-#include "stm32f4xx_hal_gpio.h"
+#include "stm32f1xx_hal_gpio.h"
 
 // LED delay duration
 #define LEDDELAY    200000
