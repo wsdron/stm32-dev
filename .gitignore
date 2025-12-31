@@ -14,3 +14,4 @@ Release/
 RemoteSystemsTempFiles/
 build
 .DS_Store
+.cache/

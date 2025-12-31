@@ -26,10 +26,11 @@ set(MCU_LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/flash/STM32F407VGTX_FLASH.ld)
 set(CMSIS_PATH ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/CMSIS)
 set(HAL_PATH ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/STM32F4xx_HAL_Driver)
 
-add_subdirectory(src/modules)
 
 # Production build
 if(NOT TEST_MODE)
+    add_subdirectory(src/modules)
+
     #  -------- Collate Code Sources --------
     file(GLOB_RECURSE PROJECT_SOURCES "${PROJECT_DIR}/*.c")
     #  -------- Include HAL Sources -------- 
@@ -151,6 +152,7 @@ else()
     # set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
     FetchContent_MakeAvailable(googletest)
     enable_testing()
+    add_subdirectory(src/modules/simple_module)
     add_subdirectory(src/modules/simple_module/test)
 
 endif()

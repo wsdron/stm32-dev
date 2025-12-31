@@ -51,7 +51,7 @@ namespace my
       // Tests that Foo does Xyz.
       TEST_F(SimpleModuleTest, DoesXyz)
       {
-        // Exercises the Xyz feature of Foo.
+        ASSERT_EQ(SomethingSimple(1,2), 6);
       }
 
     } // namespace
