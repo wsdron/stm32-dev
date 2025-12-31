@@ -66,7 +66,7 @@ if(NOT TEST_MODE)
         
     #  -------- Include dependencies --------
     target_include_directories(${EXECUTABLE} PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
         ${CMAKE_CURRENT_SOURCE_DIR}/src/modules/simple_module
         ${HAL_PATH}/Inc
         ${HAL_PATH}/Inc/Legacy
