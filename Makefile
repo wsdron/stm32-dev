@@ -2,7 +2,7 @@
 
 TARGET := main
 TEST_MODE ?= FALSE
-TEST_SWC ?= simple_modle
+TEST_SWC ?= simple_module
 BUILD_TYPE ?= Debug
 CMAKE_PATH := cmake
 CTEST_PATH := ctest
@@ -24,6 +24,7 @@ ${BUILD_DIR}/Makefile:
 	@${CMAKE_PATH} \
 		-B${BUILD_DIR} \
 		-DTEST_MODE=${TEST_MODE} \
+		-DTEST_SWC=${TEST_SWC} \
 		-DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
 		-DCMAKE_TOOLCHAIN_FILE=${TOOLCHAIN_FILE} \
 		-DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
