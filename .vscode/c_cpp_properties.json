@@ -10,7 +10,7 @@
                 "${workspaceRoot}/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy",
                 "${workspaceFolder}/include",
                 "${workspaceFolder}/src/modules",
-                "/Applications/ArmGNUToolchain/11.3.rel1/arm-none-eabi/arm-none-eabi/include/c++/11.3.1",
+                "${workspaceFolder}/../compiler/arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/13.2.1",
                 "${workspaceFolder}/Drivers/CMSIS/Device/ST/STM32F4xx/Include"
             ],
             "defines": [
@@ -26,7 +26,7 @@
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": ""
             },
-            "compilerPath": "/opt/homebrew/bin/arm-none-eabi-gcc",
+            "compilerPath": "arm-none-eabi-gcc",
             "cStandard": "gnu17",
             "cppStandard": "c++17"
         }

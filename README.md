@@ -7,6 +7,7 @@ A bare metal C project template and development environment for STM32 microcontr
 - Docker
 - Visual Studio Code
 - [Visual Studio Code Remote Development Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack)
+- https://github.com/STMicroelectronics/STM32CubeF1/tree/master/Drivers, this folder has all you need for stm32f1 series micro CMSIS and STM prepheral, startup code, linker
 
 ### Installation
 To install run `git clone https://github.com/lukezsmith/stm32-dev` to clone the repository.

@@ -2,12 +2,13 @@
 
 TARGET := main
 TEST_MODE ?= FALSE
+TEST_SWC ?= simple_module
 BUILD_TYPE ?= Debug
-CMAKE_PATH := /opt/local/bin/cmake
-CTEST_PATH := /opt/local/bin/ctest
+CMAKE_PATH := cmake
+CTEST_PATH := ctest
 
 ifeq ($(TEST_MODE), TRUE)
-	BUILD_DIR := build/test
+	BUILD_DIR := build/test/$(TEST_SWC)
 	TOOLCHAIN_FILE := ""
 else
 	BUILD_DIR := build/release
@@ -23,6 +24,7 @@ ${BUILD_DIR}/Makefile:
 	@${CMAKE_PATH} \
 		-B${BUILD_DIR} \
 		-DTEST_MODE=${TEST_MODE} \
+		-DTEST_SWC=${TEST_SWC} \
 		-DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
 		-DCMAKE_TOOLCHAIN_FILE=${TOOLCHAIN_FILE} \
 		-DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
@@ -34,7 +36,7 @@ build: cmake
 	@$(MAKE) -C ${BUILD_DIR} --no-print-directory
 
 flash: build/release/Makefile 
-	openocd -f interface/stlink.cfg -f target/stm32f4x.cfg -c "program build/release/$(TARGET).elf verify reset exit"
+	openocd -f interface/cmsis-dap.cfg -f target/stm32f1x.cfg -c "program build/release/$(TARGET).elf verify reset exit"
 
 # test: build
 # 	ctest --test-dir ./build/test

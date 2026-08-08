@@ -14,3 +14,5 @@ Release/
 RemoteSystemsTempFiles/
 build
 .DS_Store
+.cache/
+compile_commands.*
