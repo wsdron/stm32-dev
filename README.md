@@ -66,3 +66,30 @@ I used a couple of different repositories to build this template:
 - [rgujju/STM32_Base_Project](https://github.com/rgujju/STM32_Base_Project)
     - I borrowed the test module collation idea from this unity-based project template.
 
+## Developer Workflow & Git Guidelines
+
+We maintain a flat, squashed commit history on `main`. Direct pushes and force pushes to `origin/main` are blocked—all changes must land via Pull Requests.
+
+### 1. One-Time Setup
+git clone git@github.com:wsdron/stm32-dev.git
+
+### 2. Authenticate with GitHub
+gh auth login
+
+### 3. Set default repository target to origin
+gh repo set-default wsdron/stm32-dev
+
+### 4. Daily workflow
+a, create local feature branch
+- git fetch origin main    (fetch the remote main branch commits history)
+- git checkout main   (checkout the main branch)
+- git reset --hard origin/main   (force sync with origin/main branch)
+- git checkout -b user/{feature-name}   (create feature branch)
+- git commit -n     (make commits)
+- git push  (push the local branch to remote feature branch)
+
+b, create pull request
+- git rebase -i origin/main   (rebase to the remote main)
+- git push -f             (force push the local branch to remote feature branch)
+- gh pr create -w       (create pull request through web)
+- gh pr merge --squash --delete-branch     (Once approved, squash-merge the PR and delete the remote feature branch)

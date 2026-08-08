@@ -1,35 +1,18 @@
 {
     "configurations": [
-        {
-            "name": "ARM",
-            "includePath": [
-                "${workspaceRoot}/include",
-                "${workspaceRoot}/Drivers/CMSIS/Core/Include",
-                "${workspaceRoot}/Drivers/CMSIS/Device/ST/STM32F4xx/Include",
-                "${workspaceRoot}/Drivers/STM32F4xx_HAL_Driver/Inc",
-                "${workspaceRoot}/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy",
-                "${workspaceFolder}/include",
-                "${workspaceFolder}/src/modules",
-                "${workspaceFolder}/../compiler/arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-eabi/arm-none-eabi/include/c++/13.2.1",
-                "${workspaceFolder}/Drivers/CMSIS/Device/ST/STM32F4xx/Include"
-            ],
-            "defines": [
-                "STM32F407xx",
-                "__VFP_FP__",
-                "__ARM_ARCH_7EM__"
-            ],
-            "intelliSenseMode": "clang-x64",
-            "browse": {
-                "path": [
-                    "${workspaceRoot}/include"
-                ],
-                "limitSymbolsToIncludedHeaders": true,
-                "databaseFilename": ""
-            },
-            "compilerPath": "arm-none-eabi-gcc",
-            "cStandard": "gnu17",
-            "cppStandard": "c++17"
+      {
+        "name": "STM32F103",
+        "compilerPath": "/usr/bin/arm-none-eabi-gcc",
+        "compileCommands": "${workspaceFolder}/build/release/compile_commands.json",
+        "cStandard": "c11",
+        "intelliSenseMode": "gcc-arm",
+        "browse": {
+          "path": [
+            "${workspaceFolder}"
+          ],
+          "limitSymbolsToIncludedHeaders": true
         }
+      }
     ],
     "version": 4
-}
+  }
