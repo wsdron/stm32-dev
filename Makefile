@@ -36,7 +36,7 @@ build: cmake
 	@$(MAKE) -C ${BUILD_DIR} --no-print-directory
 
 flash: build/release/Makefile 
-	openocd -f interface/stlink.cfg -f target/stm32f4x.cfg -c "program build/release/$(TARGET).elf verify reset exit"
+	openocd -f interface/cmsis-dap.cfg -f target/stm32f1x.cfg -c "program build/release/$(TARGET).elf verify reset exit"
 
 # test: build
 # 	ctest --test-dir ./build/test
