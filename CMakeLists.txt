@@ -20,10 +20,9 @@ set(CPU_PARAMETERS
 set(PROJECT_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR})    
 set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/led_hal)
 
-set(STARTUP_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/src/startup_stm32f103xe.s)
+set(STARTUP_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/led_hal/startup_stm32f103xe.s)
 set(MCU_LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/flash/STM32F103XE_FLASH.ld)
 set(CMSIS_PATH ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/CMSIS)
-#set(STARTUP_SCRIPT ${CMSIS_PATH}/startup/startup_stm32f10x_hd.s)
 set(HAL_PATH ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/STM32F1xx_HAL_Driver)
 
 
@@ -42,11 +41,16 @@ if(NOT TEST_MODE)
     ${HAL_PATH}/src/stm32f10x_exti.c 
     ${HAL_PATH}/src/stm32f10x_tim.c) 
 
+#  -------- Include CMSIS Sources -------- 
+    set(CMSIS_SOURCES
+    ${CMSIS_PATH}/system_stm32f10x.c) 
+
     #  -------- Create executable --------
     add_executable(${EXECUTABLE}
-        ${PROJECT_SOURCES}/
-        ${HAL_SOURCES}/
-        ${STARTUP_SCRIPT}/)
+        ${PROJECT_SOURCES}
+        ${HAL_SOURCES}
+        ${CMSIS_SOURCES}
+        ${STARTUP_SCRIPT})
         
     #  -------- Include dependencies --------
     target_include_directories(${EXECUTABLE} PRIVATE
@@ -61,6 +65,7 @@ if(NOT TEST_MODE)
             ${CPU_PARAMETERS}
                 -DUSE_STDPERIPH_DRIVER
                 -DSTM32F10X_HD
+                -DHSE_VALUE=8000000UL
                 -std=gnu11
                 -Wall
                 -Wextra
