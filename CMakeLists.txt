@@ -18,9 +18,9 @@ set(CPU_PARAMETERS
     -mfloat-abi=soft)
 
 set(PROJECT_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR})    
-set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/led_hal)
 
-set(STARTUP_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/src/startup_stm32f103xe.s)
+set(STARTUP_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/led_hal/startup_stm32f103xe.s)
 set(MCU_LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/flash/STM32F103XE_FLASH.ld)
 set(CMSIS_PATH ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/CMSIS)
 set(HAL_PATH ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/STM32F1xx_HAL_Driver)
@@ -28,46 +28,44 @@ set(HAL_PATH ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/STM32F1xx_HAL_Driver)
 
 # Production build
 if(NOT TEST_MODE)
-    add_subdirectory(src/modules)
 
     #  -------- Collate Code Sources --------
     file(GLOB_RECURSE PROJECT_SOURCES "${PROJECT_DIR}/*.c")
     #  -------- Include HAL Sources -------- 
     set(HAL_SOURCES
-    ${HAL_PATH}/Src/stm32f1xx_hal_rcc.c 
-    ${HAL_PATH}/Src/stm32f1xx_hal_rcc_ex.c 
-    ${HAL_PATH}/Src/stm32f1xx_hal_flash.c 
-    ${HAL_PATH}/Src/stm32f1xx_hal_flash_ex.c 
-    ${HAL_PATH}/Src/stm32f1xx_hal_gpio.c 
-    ${HAL_PATH}/Src/stm32f1xx_hal_dma.c 
-    ${HAL_PATH}/Src/stm32f1xx_hal_pwr.c 
-    ${HAL_PATH}/Src/stm32f1xx_hal_cortex.c 
-    ${HAL_PATH}/Src/stm32f1xx_hal.c 
-    ${HAL_PATH}/Src/stm32f1xx_hal_exti.c 
-    ${HAL_PATH}/Src/stm32f1xx_hal_tim.c 
-    ${HAL_PATH}/Src/stm32f1xx_hal_tim_ex.c)
+    ${HAL_PATH}/src/stm32f10x_rcc.c 
+    ${HAL_PATH}/src/stm32f10x_flash.c 
+    ${HAL_PATH}/src/stm32f10x_gpio.c 
+    ${HAL_PATH}/src/stm32f10x_dma.c 
+    ${HAL_PATH}/src/stm32f10x_pwr.c 
+    ${HAL_PATH}/src/stm32f10x_exti.c 
+    ${HAL_PATH}/src/stm32f10x_tim.c) 
+
+#  -------- Include CMSIS Sources -------- 
+    set(CMSIS_SOURCES
+    ${CMSIS_PATH}/system_stm32f10x.c) 
 
     #  -------- Create executable --------
     add_executable(${EXECUTABLE}
         ${PROJECT_SOURCES}
         ${HAL_SOURCES}
+        ${CMSIS_SOURCES}
         ${STARTUP_SCRIPT})
         
     #  -------- Include dependencies --------
     target_include_directories(${EXECUTABLE} PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/src
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/modules/simple_module
-        ${HAL_PATH}/Inc
-        ${HAL_PATH}/Inc/Legacy
-        ${CMSIS_PATH}/Device/ST/STM32F1xx/Include
-        ${CMSIS_PATH}/Include)
+        ${PROJECT_DIR}/
+        ${PROJECT_DIR}/led/
+        ${HAL_PATH}/inc/
+        ${CMSIS_PATH}/)
 
     #  -------- Compilation configuration --------
     if (CMAKE_BUILD_TYPE STREQUAL Debug)
         target_compile_options(${EXECUTABLE} PRIVATE
             ${CPU_PARAMETERS}
-                -DUSE_HAL_DRIVER 
-                -DSTM32F103xE
+                -DUSE_STDPERIPH_DRIVER
+                -DSTM32F10X_HD
+                -DHSE_VALUE=8000000UL
                 -std=gnu11
                 -Wall
                 -Wextra
@@ -93,7 +91,7 @@ if(NOT TEST_MODE)
         target_compile_options(${EXECUTABLE} PRIVATE
         ${CPU_PARAMETERS}
             -DUSE_HAL_DRIVER 
-            -DSTM32F103xE
+            -DSTM32F10X_HD
             -std=gnu11
             -Wall
             -Wextra
