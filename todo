@@ -1,2 +1,3 @@
-- clean up the hal, it is like spaghetti right now...
-    - the sample project uses gpio, rcc only, but enable too many peripheral 
+- check if linker is right
+    - tutorial uses STM32F103HD_FLASH.ld, while code base currently uses STM32F103XE_FLASH.ld
+    - the controller is STM32F103VET6, sram 64KB, flash 512KB, 80GPIO 
