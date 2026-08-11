@@ -22,8 +22,8 @@ set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/led_hal)
 
 set(STARTUP_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/led_hal/startup_stm32f103xe.s)
 set(MCU_LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/flash/STM32F103XE_FLASH.ld)
-set(CMSIS_PATH ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/CMSIS)
-set(HAL_PATH ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/STM32F1xx_HAL_Driver)
+set(CMSIS_PATH ${CMAKE_CURRENT_SOURCE_DIR}/hal/cmsis)
+set(HAL_PATH ${CMAKE_CURRENT_SOURCE_DIR}/hal/stm32_peripheral)
 
 
 # Production build
@@ -32,14 +32,7 @@ if(NOT TEST_MODE)
     #  -------- Collate Code Sources --------
     file(GLOB_RECURSE PROJECT_SOURCES "${PROJECT_DIR}/*.c")
     #  -------- Include HAL Sources -------- 
-    set(HAL_SOURCES
-    ${HAL_PATH}/src/stm32f10x_rcc.c 
-    ${HAL_PATH}/src/stm32f10x_flash.c 
-    ${HAL_PATH}/src/stm32f10x_gpio.c 
-    ${HAL_PATH}/src/stm32f10x_dma.c 
-    ${HAL_PATH}/src/stm32f10x_pwr.c 
-    ${HAL_PATH}/src/stm32f10x_exti.c 
-    ${HAL_PATH}/src/stm32f10x_tim.c) 
+    file(GLOB_RECURSE HAL_SOURCES "${HAL_PATH}/*.c")
 
 #  -------- Include CMSIS Sources -------- 
     set(CMSIS_SOURCES
@@ -53,11 +46,24 @@ if(NOT TEST_MODE)
         ${STARTUP_SCRIPT})
         
     #  -------- Include dependencies --------
-    target_include_directories(${EXECUTABLE} PRIVATE
-        ${PROJECT_DIR}/
-        ${PROJECT_DIR}/led/
-        ${HAL_PATH}/inc/
-        ${CMSIS_PATH}/)
+    # 1. Collect subdirectories into a list variable
+    set(MY_INCLUDE_DIRS "")
+    
+    file(GLOB SUBDIRS LIST_DIRECTORIES true "${PROJECT_DIR}/*")
+    foreach(SUBDIR ${SUBDIRS})
+        if(IS_DIRECTORY ${SUBDIR})
+            list(APPEND MY_INCLUDE_DIRS ${SUBDIR})
+        endif()
+    endforeach()
+    
+    # 2. Append extra manual paths to your list
+    list(APPEND MY_INCLUDE_DIRS
+        ${PROJECT_DIR}
+        ${HAL_PATH}/inc
+        ${CMSIS_PATH})
+
+    # 3. Add all paths to your target in one call
+    target_include_directories(${EXECUTABLE} PRIVATE ${MY_INCLUDE_DIRS})
 
     #  -------- Compilation configuration --------
     if (CMAKE_BUILD_TYPE STREQUAL Debug)
@@ -65,7 +71,6 @@ if(NOT TEST_MODE)
             ${CPU_PARAMETERS}
                 -DUSE_STDPERIPH_DRIVER
                 -DSTM32F10X_HD
-                -DHSE_VALUE=8000000UL
                 -std=gnu11
                 -Wall
                 -Wextra
