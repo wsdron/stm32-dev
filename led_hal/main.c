@@ -4,13 +4,13 @@
   * @author  fire
   * @version V1.0
   * @date    2013-xx-xx
-  * @brief   ²âÊÔled
+  * @brief   æµ‹è¯•led
   ******************************************************************************
   * @attention
   *
-  * ÊµÑéÆ½Ì¨:Ò°»ğ F103-Ö¸ÄÏÕß STM32 ¿ª·¢°å 
-  * ÂÛÌ³    :http://www.firebbs.cn
-  * ÌÔ±¦    :https://fire-stm32.taobao.com
+  * å®éªŒå¹³å°:é‡ç« F103-æŒ‡å—è€… STM32 å¼€å‘æ¿ 
+  * è®ºå›    :http://www.firebbs.cn
+  * æ·˜å®    :https://fire-stm32.taobao.com
   *
   ******************************************************************************
   */ 
@@ -23,30 +23,30 @@
 void Delay(__IO u32 nCount); 
 
 /**
-  * @brief  Ö÷º¯Êı
-  * @param  ÎŞ  
-  * @retval ÎŞ
+  * @brief  ä¸»å‡½æ•°
+  * @param  æ—   
+  * @retval æ— 
   */
 int main(void)
 {	
-	/* LED ¶Ë¿Ú³õÊ¼»¯ */
+	/* LED ç«¯å£åˆå§‹åŒ– */
 	LED_GPIO_Config();	 
 
 	while (1)
 	{
-		LED1_ON;			  // ÁÁ
+		LED1_ON;			  // äº®
 		SOFT_DELAY;
-		LED1_OFF;		   // Ãğ
+		LED1_OFF;		   // ç­
 
-		LED2_ON;			 // ÁÁ
+		LED2_ON;			 // äº®
 		SOFT_DELAY;
-		LED2_OFF;		   // Ãğ
+		LED2_OFF;		   // ç­
 
-		LED3_ON;			 // ÁÁ
+		LED3_ON;			 // äº®
 		SOFT_DELAY;
-		LED3_OFF;		   // Ãğ	 
+		LED3_OFF;		   // ç­	 
 
-		/*ÂÖÁ÷ÏÔÊ¾ ºìÂÌÀ¶»Æ×ÏÇà°× ÑÕÉ«*/
+		/*è½®æµæ˜¾ç¤º çº¢ç»¿è“é»„ç´«é’ç™½ é¢œè‰²*/
 		LED_RED;
 		SOFT_DELAY;
 		
@@ -73,7 +73,7 @@ int main(void)
 	}
 }
 
-void Delay(__IO uint32_t nCount)	 //¼òµ¥µÄÑÓÊ±º¯Êı
+void Delay(__IO uint32_t nCount)	 //ç®€å•çš„å»¶æ—¶å‡½æ•°
 {
 	for(; nCount != 0; nCount--);
 }
