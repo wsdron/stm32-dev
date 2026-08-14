@@ -18,7 +18,7 @@ set(CPU_PARAMETERS
     -mfloat-abi=soft)
 
 set(PROJECT_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR})    
-set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/proj-19-systick)
+set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/proj-21-usart-1-rxtx)
 
 set(STARTUP_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/flash/startup_stm32f103xe.s)
 set(MCU_LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/flash/STM32F103XE_FLASH.ld)
@@ -36,6 +36,7 @@ if(NOT TEST_MODE)
 
 #  -------- Include CMSIS Sources -------- 
     set(CMSIS_SOURCES
+    ${CMSIS_PATH}/syscalls.c 
     ${CMSIS_PATH}/system_stm32f10x.c) 
 
     #  -------- Create executable --------
