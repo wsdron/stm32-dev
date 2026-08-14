@@ -3,7 +3,7 @@
 
 
 #include "stm32f10x.h"
-#include <stdio.h>
+//#include <stdio.h>
 
 /** 
   * 串口宏定义，不同的串口挂载的总线和IO不一样，移植时需要修改这几个宏

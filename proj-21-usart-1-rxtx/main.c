@@ -31,8 +31,8 @@ int main(void)
   USART_Config();
 	
 	/* 发送一个字符串 */
-	Usart_SendString( DEBUG_USARTx,"这是一个串口中断接收回显实验\n");
-	printf("欢迎使用野火STM32开发板\n\n\n\n");
+	Usart_SendString( DEBUG_USARTx,"simple usart experiment\n");
+	//printf("欢迎使用野火STM32开发板\n\n\n\n");
 	
   while(1)
 	{	

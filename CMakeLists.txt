@@ -36,7 +36,7 @@ if(NOT TEST_MODE)
 
 #  -------- Include CMSIS Sources -------- 
     set(CMSIS_SOURCES
-    ${CMSIS_PATH}/syscalls.c 
+        #${CMSIS_PATH}/syscalls.c 
     ${CMSIS_PATH}/system_stm32f10x.c) 
 
     #  -------- Create executable --------
