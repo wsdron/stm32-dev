@@ -28,7 +28,6 @@ typedef enum { FAILED = 0, PASSED = !FAILED} TestStatus;
 #define RxBufferSize1   (countof(TxBuffer1) - 1)
 #define countof(a)      (sizeof(a) / sizeof(*(a)))
 #define  BufferSize (countof(Tx_Buffer)-1)
-#define  buffer_size (countof(Tx_Buffer))
 
 #define  FLASH_WriteAddress     0x00000
 #define  FLASH_ReadAddress      FLASH_WriteAddress
@@ -40,8 +39,8 @@ typedef enum { FAILED = 0, PASSED = !FAILED} TestStatus;
 uint8_t Tx_Buffer[] = "thank you for using embed fire board\r\n";
 uint8_t Rx_Buffer[BufferSize];
 
-char tx_buffer[buffer_size];
-char rx_buffer[buffer_size];
+char tx_buffer[BufferSize];
+char rx_buffer[BufferSize];
 
 __IO uint32_t DeviceID = 0;
 __IO uint32_t FlashID = 0;
@@ -116,13 +115,13 @@ int main(void)
 		// 这里写一页，一页的大小为256个字节
 		SPI_FLASH_BufferWrite(Tx_Buffer, FLASH_WriteAddress, BufferSize);		
 	    Usart_SendString( DEBUG_USARTx,"data going to be written\n");
-        convert_text_bytes(Tx_Buffer, buffer_size, tx_buffer);
+        convert_text_bytes(Tx_Buffer, BufferSize, tx_buffer);
 	    Usart_SendString( DEBUG_USARTx, tx_buffer);
 		
 		/* 将刚刚写入的数据读出来放到接收缓冲区中 */
 		SPI_FLASH_BufferRead(Rx_Buffer, FLASH_ReadAddress, BufferSize);
 	    Usart_SendString( DEBUG_USARTx,"data read:\n");
-        convert_text_bytes(Rx_Buffer, buffer_size, rx_buffer);
+        convert_text_bytes(Rx_Buffer, BufferSize, rx_buffer);
 	    Usart_SendString( DEBUG_USARTx, rx_buffer);
 		
 		/* 检查写入的数据与读出的数据是否相等 */
