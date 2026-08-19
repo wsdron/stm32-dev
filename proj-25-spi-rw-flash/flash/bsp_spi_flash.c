@@ -16,6 +16,8 @@
   */
   
 #include "./flash/bsp_spi_flash.h"
+#include "./usart/bsp_usart.h"
+#include <stdint.h>
 
 static __IO uint32_t  SPITimeout = SPIT_LONG_TIMEOUT;    
 static uint16_t SPI_TIMEOUT_UserCallback(uint8_t errorCode);
@@ -151,7 +153,7 @@ void SPI_FLASH_PageWrite(u8* pBuffer, u32 WriteAddr, u16 NumByteToWrite)
   if(NumByteToWrite > SPI_FLASH_PerWritePageSize)
   {
      NumByteToWrite = SPI_FLASH_PerWritePageSize;
-     FLASH_ERROR("SPI_FLASH_PageWrite too large!"); 
+	 Usart_SendString( DEBUG_USARTx,"SPI_FLASH_PageWrite too large!\n");
   }
 
   /* 写入数据*/
@@ -479,7 +481,7 @@ void SPI_FLASH_WriteEnable(void)
   */
 void SPI_FLASH_WaitForWriteEnd(void)
 {
-  u8 FLASH_Status = 0;
+  u8 FLASH_Status_local = 0;
 
   /* 选择 FLASH: CS 低 */
   SPI_FLASH_CS_LOW();
@@ -491,9 +493,9 @@ void SPI_FLASH_WaitForWriteEnd(void)
   do
   {
 		/* 读取FLASH芯片的状态寄存器 */
-    FLASH_Status = SPI_FLASH_SendByte(Dummy_Byte);	 
+    FLASH_Status_local = SPI_FLASH_SendByte(Dummy_Byte);	 
   }
-  while ((FLASH_Status & WIP_Flag) == SET);  /* 正在写入标志 */
+  while ((FLASH_Status_local & WIP_Flag) == SET);  /* 正在写入标志 */
 
   /* 停止信号  FLASH: CS 高 */
   SPI_FLASH_CS_HIGH();
@@ -525,7 +527,16 @@ void SPI_Flash_WAKEUP(void)
    /* 停止信号 FLASH: CS 高 */
   SPI_FLASH_CS_HIGH();
 }   
-   
+
+void uint8_to_dec_string(uint8_t val, char *out_str) {
+    // Extract hundreds, tens, and units using basic arithmetic
+    out_str[0] = '0' + (val / 100);        // Hundreds place
+    out_str[1] = '0' + ((val / 10) % 10);  // Tens place
+    out_str[2] = '0' + (val % 10);         // Units place
+    
+    // Null-terminate the string
+    out_str[3] = '\0';
+}   
 
 /**
   * @brief  等待超时回调函数
@@ -535,7 +546,13 @@ void SPI_Flash_WAKEUP(void)
 static  uint16_t SPI_TIMEOUT_UserCallback(uint8_t errorCode)
 {
   /* 等待超时后的处理,输出错误信息 */
-  FLASH_ERROR("SPI 等待超时!errorCode = %d",errorCode);
+  Usart_SendString( DEBUG_USARTx,"SPI wait timeout! error code: \n");
+
+  char buff_id[3];
+  uint8_to_dec_string(errorCode, buff_id); 
+  Usart_SendString( DEBUG_USARTx, buff_id);
+  Usart_SendString( DEBUG_USARTx,"\n");
+
   return 0;
 }
    

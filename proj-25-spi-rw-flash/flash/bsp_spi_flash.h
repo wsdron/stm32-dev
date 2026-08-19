@@ -2,7 +2,6 @@
 #define __SPI_FLASH_H
 
 #include "stm32f10x.h"
-#include <stdio.h>
 
 //#define  sFLASH_ID              0xEF3015   //W25X16
 //#define  sFLASH_ID              0xEF4015	 //W25Q16
@@ -74,13 +73,6 @@
 
 /*信息输出*/
 #define FLASH_DEBUG_ON         1
-
-#define FLASH_INFO(fmt,arg...)           printf("<<-FLASH-INFO->> "fmt"\n",##arg)
-#define FLASH_ERROR(fmt,arg...)          printf("<<-FLASH-ERROR->> "fmt"\n",##arg)
-#define FLASH_DEBUG(fmt,arg...)          do{\
-                                          if(FLASH_DEBUG_ON)\
-                                          printf("<<-FLASH-DEBUG->> [%d]"fmt"\n",__LINE__, ##arg);\
-                                          }while(0)
 
 void SPI_FLASH_Init(void);
 void SPI_FLASH_SectorErase(u32 SectorAddr);
