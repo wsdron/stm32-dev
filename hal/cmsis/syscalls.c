@@ -12,21 +12,37 @@
 extern int errno;
 extern int  _end;
 
+// Create a dummy file object to satisfy nonnull checks
+static FILE dummy_stream;
+
 /*This function is used for handle heap option*/
 __attribute__ ((used))
-caddr_t _sbrk ( int incr )
-{
+caddr_t _sbrk(int incr) {
     static unsigned char *heap = NULL;
     unsigned char *prev_heap;
+    
+    // Check current stack pointer to prevent heap-stack collision
+    register char * stack_ptr __asm__ ("sp");
 
     if (heap == NULL) {
         heap = (unsigned char *)&_end;
     }
+    
     prev_heap = heap;
+    
+    if (heap + incr > (unsigned char *)stack_ptr) {
+        // Heap and stack collision detected! Broadcast warning over USART
+        char *warning = "\r\n[CRITICAL ERROR]: Heap-Stack Collision Detected!\r\n";
+        while (*warning) {
+            fputc(*warning++, &dummy_stream);
+        }
+
+        // Heap and stack collision!
+        return (caddr_t)-1;
+    }
 
     heap += incr;
-
-    return (caddr_t) prev_heap;
+    return (caddr_t)prev_heap;
 }
 
 __attribute__ ((used))
@@ -64,45 +80,33 @@ int _lseek(int file, int ptr, int dir)
 __attribute__ ((used))
 int _read(int file, char *ptr, int len)
 {
+    int i;
+    (void)file;
 
-#if 0
-     //user code example
-     int i;
-     (void)file;
-
-     for(i = 0; i < len; i++)
-     {
-        // UART_GetChar is user's basic input function
-        *ptr++ = UART_GetChar();
-     }
-
-#endif
+    for (i = 0; i < len; i++)
+    {
+        // Call EmbedFire's fgetc to retrieve each character
+        *ptr++ = (char)fgetc(&dummy_stream);
+    }
 
     return len;
 }
-
 
 /*Low layer write(output) function*/
 __attribute__ ((used))
 int _write(int file, char *ptr, int len)
 {
+    int i;
+    (void)file;
 
-#if 0
-     //user code example
-
-     int i;
-     (void)file;
-
-     for(i = 0; i < len; i++)
-     {
-        // UART_PutChar is user's basic output function
-        UART_PutChar(*ptr++);
-     }
-#endif
+    for (i = 0; i < len; i++)
+    {
+        // Call fputc to output each character
+        fputc(*ptr++, &dummy_stream);
+    }
 
     return len;
 }
-
 __attribute__ ((used))
 void abort(void)
 {
