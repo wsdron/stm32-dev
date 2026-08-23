@@ -18,7 +18,7 @@ set(CPU_PARAMETERS
     -mfloat-abi=soft)
 
 set(PROJECT_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR})    
-set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/proj-30-single-adc-single-channel)
+set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/proj-30-single-adc-multi-channel-dma-based)
 
 set(STARTUP_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/flash/startup_stm32f103xe.s)
 set(MCU_LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/flash/STM32F103XE_FLASH.ld)
