@@ -1,3 +1,6 @@
-- check if linker is right
-    - tutorial uses STM32F103HD_FLASH.ld, while code base currently uses STM32F103XE_FLASH.ld
-    - the controller is STM32F103VET6, sram 64KB, flash 512KB, 80GPIO 
+- the controller is STM32F103VET6, sram 64KB, flash 512KB, 80GPIO, 100Pin total 
+
+additional class
+- CAN, try add-on hardware, then communicate with usb-can dongle
+- bootloader
+- free rtos integration
