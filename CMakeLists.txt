@@ -18,7 +18,7 @@ set(CPU_PARAMETERS
     -mfloat-abi=soft)
 
 set(PROJECT_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR})    
-set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/proj-30-single-adc-multi-channel-dma-based)
+set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/proj-31-timer-basic)
 
 set(STARTUP_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/flash/startup_stm32f103xe.s)
 set(MCU_LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/flash/STM32F103XE_FLASH.ld)
@@ -91,6 +91,7 @@ if(NOT TEST_MODE)
                 -fdata-sections
                 -Wno-unused-parameter
                 --specs=nano.specs
+                -u _printf_float
                 -Og -g3 -ggdb)
 
     else()
@@ -117,6 +118,7 @@ if(NOT TEST_MODE)
             -fdata-sections
             -Wno-unused-parameter
             --specs=nano.specs
+            -u _printf_float
             -Og -g0)
 
     endif()
