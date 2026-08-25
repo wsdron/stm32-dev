@@ -7,6 +7,7 @@
 #include <stdarg.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <errno.h>
 
 #undef errno
 extern int errno;
@@ -107,11 +108,30 @@ int _write(int file, char *ptr, int len)
 
     return len;
 }
-__attribute__ ((used))
+
+__attribute__ ((weak))
 void abort(void)
 {
     /* Abort called */
     while(1);
 }
 
+
+int _getpid(void) {
+    return 1;
+}
+
+int _kill(int pid, int sig) {
+    (void)pid;
+    (void)sig;
+    errno = EINVAL;
+    return -1;
+}
+
+void _exit(int status) {
+    (void)status;
+    while (1) {
+        // Infinite loop on exit
+    }
+}
 /* --------------------------------- End Of File ------------------------------ */

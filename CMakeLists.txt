@@ -91,7 +91,6 @@ if(NOT TEST_MODE)
                 -fdata-sections
                 -Wno-unused-parameter
                 --specs=nano.specs
-                -u _printf_float
                 -Og -g3 -ggdb)
 
     else()
@@ -118,7 +117,6 @@ if(NOT TEST_MODE)
             -fdata-sections
             -Wno-unused-parameter
             --specs=nano.specs
-            -u _printf_float
             -Og -g0)
 
     endif()
@@ -128,6 +126,8 @@ if(NOT TEST_MODE)
         ${CPU_PARAMETERS}
         -Wl,-Map=${EXECUTABLE}.map
         --specs=nano.specs
+        --specs=nosys.specs
+        -Wl,-u,_printf_float
         -Wl,--gc-sections
         -lc)
 
