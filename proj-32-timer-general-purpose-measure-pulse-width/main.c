@@ -34,7 +34,7 @@ int main(void)
 			       (TIM_ICUserValueStructure.Capture_CcrValue+1);
 			
 			// 打印高电平脉宽时间
-			printf ( "\r\n测得高电平脉宽时间：%d.%d s\r\n",time/TIM_PscCLK,time%TIM_PscCLK );
+			printf ( "\r\n测得高电平脉宽时间：%ld.%ld s\r\n",time/TIM_PscCLK,time%TIM_PscCLK );
 			
 			TIM_ICUserValueStructure.Capture_FinishFlag = 0;			
 		}		

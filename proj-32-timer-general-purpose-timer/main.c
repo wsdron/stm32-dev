@@ -2,7 +2,7 @@
 // 高级定时器TIMx,x[2,3,4,5]定时应用
 #include "stm32f10x.h"
 #include "bsp_led.h"
-#include "bsp_GENERALTim.h" 
+#include "bsp_GeneralTim.h" 
 
 uint32_t time = 0; // ms 计时变量 
 
