@@ -36,6 +36,9 @@ int main(void)
 	// 初始化电容按键
 	while( TPAD_Init() );
 
+	// calibrate the button capacitor charge time when pressed 
+	while( TPAD_calibrate_charge_time_when_pressed() );
+
 	while(1)
   {
 		if( TPAD_Scan() == TPAD_ON )

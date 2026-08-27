@@ -18,7 +18,7 @@ set(CPU_PARAMETERS
     -mfloat-abi=soft)
 
 set(PROJECT_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR})    
-set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/proj-32-timer-general-purpose-pwm-output)
+set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/proj-33-tim-capture-input-capacitor-based-button)
 
 set(STARTUP_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/flash/startup_stm32f103xe.s)
 set(MCU_LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/flash/STM32F103XE_FLASH.ld)

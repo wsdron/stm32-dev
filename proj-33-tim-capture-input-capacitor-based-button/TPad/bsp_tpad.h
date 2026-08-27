@@ -47,6 +47,7 @@ uint8_t TPAD_Init(void);
 uint8_t TPAD_Scan(void);
 uint8_t TPAD_Scan0(void);
 
+uint8_t TPAD_calibrate_charge_time_when_pressed(void);
 
 
 

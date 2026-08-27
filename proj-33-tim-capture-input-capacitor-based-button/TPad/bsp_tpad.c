@@ -4,6 +4,8 @@
 // 电容按键空载的时候充电时间
 uint16_t tpad_default_val;
 
+uint16_t TPAD_Get_MaxVal( uint8_t num );
+
 static void TPAD_TIM_GPIO_Config(void) 
 {
   GPIO_InitTypeDef GPIO_InitStructure;
@@ -168,7 +170,7 @@ uint8_t TPAD_Init(void)
 	temp = TPAD_Get_Val();
 	
 	// 调试的时候可以把捕获的值打印出来，看看默认的充电时间是多少
-	printf("电容按键默认充电时间为: %d us\n",temp);
+	printf("the default button capacitor charge time : %d us\n",temp);
 	
 	// 电容按键空载的充电时间非常稳定，不同的硬件充电时间不一样
 	// 需要实际测试所得，指南者 上的电容按键空载充电时间稳定在76
@@ -181,6 +183,36 @@ uint8_t TPAD_Init(void)
 	else
   {
 		return 1; // 失败
+	    printf("the default button capacitor charge time is beyond expectation\n");
+        printf("please recalibrate TPAD_DEFAULT_VAL_MIN and TPAD_DEFAULT_VAL_MAX\n");
+  }
+}
+
+/**
+  * @brief  
+  * @param  无
+  * @retval 0：成功，1：失败
+  * @note   按键值一般很稳定，由硬件电路决定，该函数只需要调用一次即可
+  *         而且这个充电时间每个硬件都不一样，最好实际测试下
+  */
+uint8_t TPAD_calibrate_charge_time_when_pressed(void)
+{
+	uint16_t temp;
+	
+	temp = TPAD_Get_MaxVal(3);
+	
+	// 调试的时候可以把捕获的值打印出来，看看默认的充电时间是多少
+	printf("the pressed button capacitor charge time : %d us\n",temp);
+	
+	if(temp > tpad_default_val + TPAD_GATE_VAL)
+	{
+		return 0;  // 成功
+	}
+	else
+  {
+		return 1; // 失败
+	    printf("the pressed button capacitor charge time is beyond expectation\n");
+        printf("please recalibrate TPAD_GATE_VAL\n");
   }
 }
 
