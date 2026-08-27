@@ -65,7 +65,7 @@ BitFieldColonSpacing: Both
 BraceWrapping:
   AfterCaseLabel:  false
   AfterClass:      false
-  AfterControlStatement: Never
+  AfterControlStatement: Always 
   AfterEnum:       false
   AfterExternBlock: false
   AfterFunction:   false
@@ -136,7 +136,7 @@ IndentPPDirectives: None
 IndentRequiresClause: true
 IndentWidth:     4
 IndentWrappedFunctionNames: false
-InsertBraces:    false
+InsertBraces:    true 
 InsertNewlineAtEOF: false
 InsertTrailingCommas: None
 IntegerLiteralSeparator:
@@ -180,7 +180,7 @@ ReferenceAlignment: Pointer
 ReflowComments:  true
 RemoveBracesLLVM: false
 RemoveParentheses: Leave
-RemoveSemicolon: false
+RemoveSemicolon: true 
 RequiresClausePosition: OwnLine
 RequiresExpressionIndentation: OuterScope
 SeparateDefinitionBlocks: Leave
@@ -201,7 +201,7 @@ SpaceBeforeInheritanceColon: true
 SpaceBeforeJsonColon: false
 SpaceBeforeParens: ControlStatements
 SpaceBeforeParensOptions:
-  AfterControlStatements: true
+  AfterControlStatements: true 
   AfterForeachMacros: true
   AfterFunctionDefinitionName: false
   AfterFunctionDeclarationName: false

@@ -229,7 +229,9 @@ uint16_t TPAD_Get_MaxVal(uint8_t num)
     {
         temp = TPAD_Get_Val();
         if (temp > res)
+        {
             res = temp;
+        }
     }
     return res;
 }
@@ -262,7 +264,9 @@ uint8_t TPAD_Scan(void)
         // 再次检测，类似于机械按键的去抖
         scan_val = TPAD_Get_MaxVal(sample);
         if ((keyen == 0) && (scan_val > (tpad_default_val + TPAD_GATE_VAL)))
+        {
             res = 1; // 有效的按键
+        }
 
         // 如果按键一直被按下，keyen的值会一直在keyen的初始值和keyen-1之间循环，永远不会等于0
         keyen = 2;
@@ -270,7 +274,9 @@ uint8_t TPAD_Scan(void)
 
     // 当按键没有被按下或者keyen>0时，会执行keyen--
     if (keyen > 0)
+    {
         keyen--;
+    }
 
     return res;
 }
