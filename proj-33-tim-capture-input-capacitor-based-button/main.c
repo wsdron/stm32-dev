@@ -22,11 +22,16 @@ int main(void)
 
     /* 串口初始化 */
     USART_Config();
-    printf("\r\n野火STM32 输入捕获电容按键检测实验\r\n");
-    printf("\r\n触摸电容按键，蜂鸣器则会响\r\n");
+    printf("\r\n capacitor based button press detection expreiment \r\n");
+    printf("\r\n when button pressed, it will beep \r\n");
 
     // 初始化电容按键
     while (TPAD_Init())
+    {
+    }
+
+    printf("\r\n now, let's calibrate the button, please keep it pressed, then send usart '1' \r\n");
+    while ('1' != usart_get_char())
     {
     }
 
@@ -35,6 +40,11 @@ int main(void)
     {
     }
 
+    printf("\r\n lift the press, send usart '2' to start button detection \r\n");
+    while ('2' != usart_get_char())
+    {
+    }
+    
     while (1)
     {
         if (TPAD_Scan() == TPAD_ON)

@@ -141,6 +141,15 @@ void Usart_SendHalfWord(USART_TypeDef *pUSARTx, uint16_t ch)
         ;
 }
 
+
+int usart_get_char(void)
+{
+		/* 等待串口输入数据 */
+		while (USART_GetFlagStatus(DEBUG_USARTx, USART_FLAG_RXNE) == RESET);
+
+		return (int)USART_ReceiveData(DEBUG_USARTx);
+}
+
 /// 重定向c库函数printf到串口，重定向后可使用printf函数
 int fputc(int ch, FILE *f)
 {
