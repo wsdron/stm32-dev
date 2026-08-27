@@ -25,14 +25,6 @@ int main(void)
 	printf ( "\r\n野火STM32 输入捕获电容按键检测实验\r\n" );
 	printf ( "\r\n触摸电容按键，蜂鸣器则会响\r\n" );
 	
-//	TPAD_TIM_Init();
-//	while(1)
-//  {
-//		temp = TPAD_Get_Val();
-//		printf("电容按键默认充电时间为: %d us\n",temp);
-//		SysTick_Delay_Ms(100);
-//	}
-	
 	// 初始化电容按键
 	while( TPAD_Init() );
 
@@ -40,13 +32,13 @@ int main(void)
 	while( TPAD_calibrate_charge_time_when_pressed() );
 
 	while(1)
-  {
-		if( TPAD_Scan() == TPAD_ON )
     {
-      BEEP_ON();
-			SysTick_Delay_Ms(25);
-			BEEP_OFF();
-	  }
-	}
+  		if( TPAD_Scan() == TPAD_ON )
+        {
+            BEEP_ON();
+    		SysTick_Delay_Ms(25);
+    		BEEP_OFF();
+    	}
+  	}
 }
 /*********************************************END OF FILE**********************/

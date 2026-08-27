@@ -97,12 +97,12 @@ void TPAD_Reset(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
 
-  // 输入捕获通道1 GPIO 初始化
+    // 输入捕获通道1 GPIO 初始化
 	RCC_APB2PeriphClockCmd(TPAD_TIM_CH_GPIO_CLK, ENABLE);
-  GPIO_InitStructure.GPIO_Pin =  TPAD_TIM_CH_PIN;
+    GPIO_InitStructure.GPIO_Pin =  TPAD_TIM_CH_PIN;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;	
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_Init(TPAD_TIM_CH_PORT, &GPIO_InitStructure);
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(TPAD_TIM_CH_PORT, &GPIO_InitStructure);
 	
 	// 连接TPAD的IO配置为输出，然后输出低电平，延时一会，确保电容按键放电完毕
 	GPIO_ResetBits(TPAD_TIM_CH_PORT,TPAD_TIM_CH_PIN);
@@ -112,7 +112,7 @@ void TPAD_Reset(void)
 	
 	// 连接TPAD的IO配置为输入，用于输入捕获
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-  GPIO_Init(TPAD_TIM_CH_PORT, &GPIO_InitStructure);
+    GPIO_Init(TPAD_TIM_CH_PORT, &GPIO_InitStructure);
 }
 
 /**
@@ -126,7 +126,7 @@ uint16_t TPAD_Get_Val(void)
 	TPAD_Reset();
 	
 	// 当电容按键复位放电之后，计数器清0开始计数
-  TIM_SetCounter (TPAD_TIM,0);
+    TIM_SetCounter (TPAD_TIM,0);
 	// 清除相关的标志位
 	TIM_ClearITPendingBit (TPAD_TIM, TPAD_TIM_IT_CCx | TIM_IT_Update);
 	
