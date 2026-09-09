@@ -18,7 +18,6 @@ set(CPU_PARAMETERS
     -mfloat-abi=soft)
 
 set(PROJECT_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR})    
-set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/youfang/proj-2-turn-on-one-led-light)
 
 # Normalize input to lowercase to make the check case-insensitive
 message("TARGET_BOARD passed down value '${TARGET_BOARD}'")
@@ -28,11 +27,13 @@ if(TARGET_BOARD_LOWER STREQUAL "youfang")
     message(STATUS "Configuring for Youfang board")
     set(STARTUP_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/flash_stm32f103c8t6/startup_stm32f103c8tx.s)
     set(MCU_LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/flash_stm32f103c8t6/STM32F103C8T6_FLASH.ld)
+    set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${TARGET_BOARD}/${PROJECT})
 
 elseif(TARGET_BOARD_LOWER STREQUAL "embedfire")
     message(STATUS "Configuring for Embedfire board")
     set(STARTUP_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/flash_stm32f103vet6/startup_stm32f103xe.s)
     set(MCU_LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/flash_stm32f103vet6/STM32F103XE_FLASH.ld)
+    set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT})
 
 else()
     message(FATAL_ERROR "Invalid TARGET_BOARD '${TARGET_BOARD}'. Must be 'youfang' or 'embedfire'.")

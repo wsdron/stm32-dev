@@ -25,7 +25,7 @@ else
     $(error Invalid TARGET_BOARD '$(TARGET_BOARD)'. Must be 'youfang' or 'embedfire')
 endif
 
-all: build 
+all: clean build 
 	    @if [ "$(TEST_MODE)" = TRUE ]; then \
 			$(CTEST_PATH) --test-dir $(BUILD_DIR);\
 		fi
@@ -36,6 +36,7 @@ ${BUILD_DIR}/Makefile:
 		-DTEST_MODE=${TEST_MODE} \
 		-DTEST_SWC=${TEST_SWC} \
 		-DTARGET_BOARD=${TARGET_BOARD} \
+		-DPROJECT=${PROJECT} \
 		-DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
 		-DCMAKE_TOOLCHAIN_FILE=${TOOLCHAIN_FILE} \
 		-DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
