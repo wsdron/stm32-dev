@@ -6,7 +6,7 @@ TEST_SWC ?= simple_module
 BUILD_TYPE ?= Debug
 CMAKE_PATH := cmake
 CTEST_PATH := ctest
-TARGET_BOARD ?= youfang
+BOARD ?= youfang
 
 ifeq ($(TEST_MODE), TRUE)
 	BUILD_DIR := build/test/$(TEST_SWC)
@@ -17,9 +17,9 @@ else
 endif
 
 # Define board-specific config files outside the target recipe
-ifeq ($(TARGET_BOARD),youfang)
+ifeq ($(BOARD),youfang)
     INTERFACE_CFG := interface/stlink.cfg
-else ifeq ($(TARGET_BOARD),embedfire)
+else ifeq ($(BOARD),embedfire)
     INTERFACE_CFG := interface/cmsis-dap.cfg
 else
     $(error Invalid TARGET_BOARD '$(TARGET_BOARD)'. Must be 'youfang' or 'embedfire')
@@ -35,7 +35,7 @@ ${BUILD_DIR}/Makefile:
 		-B${BUILD_DIR} \
 		-DTEST_MODE=${TEST_MODE} \
 		-DTEST_SWC=${TEST_SWC} \
-		-DTARGET_BOARD=${TARGET_BOARD} \
+		-DTARGET_BOARD=${BOARD} \
 		-DPROJECT=${PROJECT} \
 		-DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
 		-DCMAKE_TOOLCHAIN_FILE=${TOOLCHAIN_FILE} \
