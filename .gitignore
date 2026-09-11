@@ -16,3 +16,4 @@ build
 .DS_Store
 .cache/
 compile_commands.*
+.ycm_extra_conf.py
