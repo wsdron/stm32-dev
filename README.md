@@ -93,3 +93,7 @@ b, create pull request
 - git push -f             (force push the local branch to remote feature branch)
 - gh pr create -w       (create pull request through web)
 - gh pr merge --squash --delete-branch     (Once approved, squash-merge the PR and delete the remote feature branch)
+
+## Useful command
+### linting source files
+fdfind . -e c -e h  youfang/proj-6-1-oled-display/ | xargs clang-format-18 -i
