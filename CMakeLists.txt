@@ -65,14 +65,23 @@ if(NOT TEST_MODE)
         
     #  -------- Include dependencies --------
     # 1. Collect subdirectories into a list variable
+
+    ## 1. Initialize an empty list
     set(MY_INCLUDE_DIRS "")
     
-    file(GLOB SUBDIRS LIST_DIRECTORIES true "${PROJECT_DIR}/*")
-    foreach(SUBDIR ${SUBDIRS})
-        if(IS_DIRECTORY ${SUBDIR})
-            list(APPEND MY_INCLUDE_DIRS ${SUBDIR})
-        endif()
+    ## 2. Find ALL files in all subdirectories recursively
+    file(GLOB_RECURSE ALL_FILES "${PROJECT_DIR}/*")
+    
+    ## 3. Extract the folder path for every file found
+    foreach(FILE_PATH ${ALL_FILES})
+        get_filename_component(DIR_PATH ${FILE_PATH} DIRECTORY)
+        list(APPEND MY_INCLUDE_DIRS ${DIR_PATH})
     endforeach()
+    
+    ## 4. Remove duplicate paths so each folder is listed only once
+    if(MY_INCLUDE_DIRS)
+        list(REMOVE_DUPLICATES MY_INCLUDE_DIRS)
+    endif()
     
     # 2. Append extra manual paths to your list
     list(APPEND MY_INCLUDE_DIRS
