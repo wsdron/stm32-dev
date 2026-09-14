@@ -290,7 +290,7 @@ void OLED_DrawBMP(unsigned char x0, unsigned char y0, unsigned char x1,
     }
 }
 
-void OLED_BMP(int i)
+void OLED_BMP(uint8_t i)
 {
     OLED_Clear();
     OLED_DrawBMP(0, 0, 127, 0, YourFun[i]);
@@ -359,4 +359,10 @@ void OLED_Init(void)
     OLED_WriteCommand(0xAF); // 开启显示
 
     OLED_Clear(); // OLED清屏
+}
+
+uint8_t get_bmp_count(void)
+{
+    uint8_t num_of_image = sizeof(YourFun) / 1024u;
+    return num_of_image;
 }

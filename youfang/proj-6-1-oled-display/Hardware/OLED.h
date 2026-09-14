@@ -17,4 +17,5 @@ void OLED_ShowBinNum(uint8_t Line, uint8_t Column, uint32_t Number,
 void OLED_DrawBMP(unsigned char x0, unsigned char y0, unsigned char x1,
                   unsigned char y1, unsigned char YourFun[]);
 void OLED_BMP(int i);
+uint8_t get_bmp_count(void);
 #endif
