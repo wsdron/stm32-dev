@@ -97,3 +97,11 @@ b, create pull request
 ## Useful command
 ### linting source files
 fdfind . -e c -e h  youfang/proj-6-1-oled-display/ | xargs clang-format-18 -i
+
+## Tools 
+### bootloader based flash, the flash tool setup
+sudo apt install -y python3-serial
+pip3 install xmodem --break-system-packages
+ 
+### bootloader based flash, the flash command 
+python3 term_flasher.py {path_to_binary} /dev/ttyUSB0
