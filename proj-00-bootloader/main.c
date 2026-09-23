@@ -117,8 +117,10 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    /* Turn on the green LED to indicate, that we are in bootloader mode.*/
-    HAL_GPIO_WritePin(GPIOC, LD3_Pin, GPIO_PIN_SET);
+    /* Turn off the blue LED, turn on green LED to indicate, that we are in bootloader mode.*/
+    HAL_GPIO_WritePin(GPIOB, Led_Blue_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(GPIOB, Led_Green_Pin, GPIO_PIN_RESET);
+
     /* Ask for new data and start the Xmodem protocol. */
     uart_transmit_str((uint8_t*)"Please send a new binary file with Xmodem protocol to update the firmware.\n\r");
     xmodem_receive();
@@ -199,12 +201,11 @@ static void MX_USART1_UART_Init(void)
 
 }
 
-/** Configure pins as 
-        * Analog 
-        * Input 
-        * Output
-        * EVENT_OUT
-        * EXTI
+/** 
+ * turn led blue on when firstly enter bootloader
+ * turn led green when start flash
+ * turn led red on when flash failed
+ * key 1 PA0 is used to detect bootloader request
 */
 static void MX_GPIO_Init(void)
 {
@@ -212,12 +213,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitTypeDef GPIO_InitStruct;
 
   /* GPIO Ports Clock Enable */
-  __HAL_RCC_GPIOD_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
-  __HAL_RCC_GPIOC_CLK_ENABLE();
-
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, LD4_Pin|LD3_Pin, GPIO_PIN_RESET);
+  __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin : BTN_Pin */
   GPIO_InitStruct.Pin = BTN_Pin;
@@ -225,12 +222,19 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(BTN_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : LD4_Pin LD3_Pin */
-  GPIO_InitStruct.Pin = LD4_Pin|LD3_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  /*Configure GPIO pins : led blue pin */
+  GPIO_InitStruct.Pin = Led_Blue_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : led green pin */
+  GPIO_InitStruct.Pin = Led_Green_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 }
 

@@ -60,6 +60,8 @@
 #define TCK_SWCLK_Pin GPIO_PIN_14
 #define TCK_SWCLK_GPIO_Port GPIOA
 
+#define Led_Blue_Pin GPIO_PIN_1
+#define Led_Green_Pin GPIO_PIN_0
 /* ########################## Assert Selection ############################## */
 /**
   * @brief Uncomment the line below to expanse the "assert_param" macro in the 
