@@ -127,6 +127,11 @@ int main(void)
     /* We only exit the xmodem protocol, if there are any errors.
      * In that case, notify the user and start over. */
     uart_transmit_str((uint8_t*)"\n\rFailed... Please try again.\n\r");
+
+    /* Turn off the green LED, turn on red LED to indicate, that we failed flash.*/
+    HAL_GPIO_WritePin(GPIOB, Led_Green_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(GPIOB, Led_Red_Pin, GPIO_PIN_RESET);
+
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
@@ -231,6 +236,13 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pins : led green pin */
   GPIO_InitStruct.Pin = Led_Green_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : led red pin */
+  GPIO_InitStruct.Pin = Led_Red_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;

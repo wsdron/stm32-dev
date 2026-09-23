@@ -62,6 +62,7 @@
 
 #define Led_Blue_Pin GPIO_PIN_1
 #define Led_Green_Pin GPIO_PIN_0
+#define Led_Red_Pin GPIO_PIN_5
 /* ########################## Assert Selection ############################## */
 /**
   * @brief Uncomment the line below to expanse the "assert_param" macro in the 
