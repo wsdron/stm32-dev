@@ -39,8 +39,8 @@ else()
     message(FATAL_ERROR "Invalid TARGET_BOARD '${TARGET_BOARD}'. Must be 'youfang' or 'embedfire'.")
 endif()
 
-set(CMSIS_PATH ${CMAKE_CURRENT_SOURCE_DIR}/hal_real/cmsis)
-set(HAL_PATH ${CMAKE_CURRENT_SOURCE_DIR}/hal_real/stm32_peripheral)
+set(CMSIS_PATH ${CMAKE_CURRENT_SOURCE_DIR}/hal/cmsis)
+set(HAL_PATH ${CMAKE_CURRENT_SOURCE_DIR}/hal/stm32_peripheral)
 
 
 # Production build
