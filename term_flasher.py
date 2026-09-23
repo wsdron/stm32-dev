@@ -106,7 +106,7 @@ if __name__ == "__main__":
     fd = sys.stdin.fileno()
     old_settings = termios.tcgetattr(fd)
     try:
-        tty.setraw(sys.stdin.fileno())
+        tty.setcbreak(sys.stdin.fileno())
         run_terminal_and_flash(serial_port, BAUD, bin_file)
     finally:
         termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
