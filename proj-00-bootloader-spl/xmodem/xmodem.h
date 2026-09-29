@@ -10,7 +10,7 @@
 #ifndef XMODEM_H_
 #define XMODEM_H_
 
-#include "uart.h"
+#include "bsp_usart.h"
 #include "flash.h"
 #include "stdbool.h"
 

@@ -25,7 +25,6 @@ int main(void)
   // init the key GPIO
   Key_GPIO_Config();
 
-
   /* Send welcome message on startup. */
   Usart_SendString( DEBUG_USARTx,"\n\r================================\n\r");
   Usart_SendString( DEBUG_USARTx,"UART Bootloader\n\r");
@@ -55,4 +54,5 @@ int main(void)
     /* Turn off the green LED, turn on red LED to indicate, that we failed flash.*/
     LED2( OFF );
     LED1( ON );
+  }
 }

@@ -84,13 +84,15 @@ void USART_Config(void)
 	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
 	// 完成串口的初始化配置
 	USART_Init(DEBUG_USARTx, &USART_InitStructure);
-	
+
+    /*    
 	// 串口中断优先级配置
 	NVIC_Configuration();
 	
 	// 使能串口接收中断
 	USART_ITConfig(DEBUG_USARTx, USART_IT_RXNE, ENABLE);	
-	
+	*/
+
 	// 使能串口
 	USART_Cmd(DEBUG_USARTx, ENABLE);	    
 }
@@ -154,6 +156,32 @@ void Usart_SendHalfWord( USART_TypeDef * pUSARTx, uint16_t ch)
 	while (USART_GetFlagStatus(pUSARTx, USART_FLAG_TXE) == RESET);	
 }
 
+uart_status uart_receive(USART_TypeDef * pUSART, uint8_t *data, uint16_t length)
+{
+    uart_status status = UART_OK;
+    uint32_t timeout;
+
+    for (uint16_t i = 0; i < length; i++)
+    {
+        // 1sec equivalent of counts
+        timeout = 12000000u;
+
+        // Wait until the RX Buffer Not Empty (RXNE) flag is set
+        while (RESET == USART_GetFlagStatus(pUSART, USART_FLAG_RXNE))
+        {
+            if (timeout == 0)
+            {
+                return UART_ERROR; // or UART_ERROR based on your enum
+            }
+            timeout--;
+        }
+
+        // Read received byte (clears the RXNE flag automatically)
+        data[i] = (uint8_t)USART_ReceiveData(USART1);
+    }
+
+    return status;
+}
 /*
 ///重定向c库函数printf到串口，重定向后可使用printf函数
 int fputc(int ch, FILE *f)

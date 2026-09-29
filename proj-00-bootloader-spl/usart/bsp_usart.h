@@ -109,4 +109,17 @@ void Usart_SendByte( USART_TypeDef * pUSARTx, uint8_t ch);
 void Usart_SendString( USART_TypeDef * pUSARTx, char *str);
 void Usart_SendHalfWord( USART_TypeDef * pUSARTx, uint16_t ch);
 
+/* Timeout for HAL. */
+#define UART_TIMEOUT ((uint16_t)1000u)
+
+/* Status report for the functions. */
+typedef enum {
+  UART_OK     = 0x00u, /**< The action was successful. */
+  UART_ERROR  = 0xFFu  /**< Generic error. */
+} uart_status;
+
+uart_status uart_receive(USART_TypeDef * pUSARTx, uint8_t *data, uint16_t length);
+uart_status uart_transmit_str(uint8_t *data);
+uart_status uart_transmit_ch(uint8_t data);
+
 #endif /* __USART_H */
