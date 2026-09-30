@@ -7,6 +7,7 @@ BUILD_TYPE ?= Debug
 CMAKE_PATH := cmake
 CTEST_PATH := ctest
 BOARD ?= youfang
+SOFTWARE ?= app
 
 ifeq ($(TEST_MODE), TRUE)
 	BUILD_DIR := build/test/$(TEST_SWC)
@@ -25,6 +26,14 @@ else
     $(error Invalid TARGET_BOARD '$(TARGET_BOARD)'. Must be 'youfang' or 'embedfire')
 endif
 
+ifeq ($(SOFTWARE),app)
+    BINARY_CFG := "program build/release/main.bin 0x08008000 verify reset exit" 
+else ifeq ($(SOFTWARE),bootloader)
+    BINARY_CFG := "program proj-00-bootloader-spl/bin/main.bin 0x08000000 verify reset exit" 
+else
+    $(error Invalid SOFTWARE '$(SOFTWARE)'. Must be 'app' or 'bootloader')
+endif
+
 all: clean build 
 	    @if [ "$(TEST_MODE)" = TRUE ]; then \
 			$(CTEST_PATH) --test-dir $(BUILD_DIR);\
@@ -36,6 +45,7 @@ ${BUILD_DIR}/Makefile:
 		-DTEST_MODE=${TEST_MODE} \
 		-DTEST_SWC=${TEST_SWC} \
 		-DTARGET_BOARD=${BOARD} \
+		-DSOFTWARE=${SOFTWARE} \
 		-DPROJECT=${PROJECT} \
 		-DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
 		-DCMAKE_TOOLCHAIN_FILE=${TOOLCHAIN_FILE} \
@@ -48,13 +58,7 @@ build: cmake
 	@$(MAKE) -C ${BUILD_DIR} --no-print-directory
 
 flash: build/release/Makefile 
-	openocd -f $(INTERFACE_CFG) -f target/stm32f1x.cfg -c "program build/release/$(TARGET).elf verify reset exit"
-
-flash2: build/release/Makefile 
-	openocd -f interface/stlink.cfg -f target/stm32f1x.cfg -c "program build/release/$(TARGET).elf verify reset exit"
-
-flash3: build/release/Makefile 
-	openocd -f interface/cmsis-dap.cfg -f target/stm32f1x.cfg -c "program build/release/$(TARGET).elf verify reset exit"
+	openocd -f $(INTERFACE_CFG) -f target/stm32f1x.cfg -c $(BINARY_CFG) 
 
 # test: build
 # 	ctest --test-dir ./build/test

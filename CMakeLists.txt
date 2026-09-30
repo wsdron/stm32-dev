@@ -32,12 +32,25 @@ if(TARGET_BOARD_LOWER STREQUAL "youfang")
 elseif(TARGET_BOARD_LOWER STREQUAL "embedfire")
     message(STATUS "Configuring for Embedfire board")
     set(STARTUP_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/flash_stm32f103vet6/startup_stm32f103xe.s)
-    set(MCU_LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/flash_stm32f103vet6/STM32F103XE_FLASH.ld)
+
+    if(SOFTWARE STREQUAL "app")
+        set(MCU_LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/flash_stm32f103vet6/STM32F103XE_FLASH.ld)
+    else()
+        set(MCU_LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/flash_stm32f103vet6/STM32F103XE_FLASH_bootloader.ld)
+    endif()
+
     set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT})
 
 else()
     message(FATAL_ERROR "Invalid TARGET_BOARD '${TARGET_BOARD}'. Must be 'youfang' or 'embedfire'.")
 endif()
+
+if(SOFTWARE STREQUAL "app")
+    set(SOFTWARE_FLAG "SOFTWARE_APP")
+else()
+    set(SOFTWARE_FLAG "SOFTWARE_BOOTLOADER")
+endif()
+
 
 set(CMSIS_PATH ${CMAKE_CURRENT_SOURCE_DIR}/hal/cmsis)
 set(HAL_PATH ${CMAKE_CURRENT_SOURCE_DIR}/hal/stm32_peripheral)
@@ -51,10 +64,8 @@ if(NOT TEST_MODE)
     #  -------- Include HAL Sources -------- 
     file(GLOB_RECURSE HAL_SOURCES "${HAL_PATH}/*.c")
 
-#  -------- Include CMSIS Sources -------- 
-    set(CMSIS_SOURCES
-    ${CMSIS_PATH}/syscalls.c
-    ${CMSIS_PATH}/system_stm32f10x.c) 
+    #  -------- Include CMSIS Sources -------- 
+    file(GLOB_RECURSE CMSIS_SOURCES "${CMSIS_PATH}/*.c")
 
     #  -------- Create executable --------
     add_executable(${EXECUTABLE}
@@ -98,6 +109,9 @@ if(NOT TEST_MODE)
             ${CPU_PARAMETERS}
                 -DUSE_STDPERIPH_DRIVER
                 -DSTM32F10X_HD
+                -DSTM32F103xE
+                -DUSE_HAL_DRIVER
+                -D${SOFTWARE_FLAG}
                 -std=gnu11
                 -Wall
                 -Wextra
@@ -124,6 +138,9 @@ if(NOT TEST_MODE)
         ${CPU_PARAMETERS}
             -DUSE_HAL_DRIVER 
             -DSTM32F10X_HD
+            -DSTM32F103xE
+            -DUSE_HAL_DRIVER
+            -D${SOFTWARE_FLAG}
             -std=gnu11
             -Wall
             -Wextra
