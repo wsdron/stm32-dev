@@ -1,0 +1,3 @@
+the project was adapted from an online project of stm32 bootloader for another dev board.
+it was adapted to the embedfire board. 
+for design of the project, please refer to section 'how it works' from the web, https://github.com/ferenc-nemeth/stm32-bootloader#how-it-works

@@ -1,0 +1,12 @@
+requirement for firmware:
+- after system reset, check flash event
+    - key push, 500ms timeout
+    - OR command 'F' from uart, 500ms timeout. 
+
+- after enter app
+    - create 100ms task, keep checking command '@flash/r/n' through uart rx irq
+    - if detected flash command, reset system
+
+requirement for flash software, the python script:
+- send command '@flash/r/n' over uart, in case firmware in app mode
+- keep sending 'F' over uart till 'C' is received from uart
