@@ -2,6 +2,7 @@
 #define __USART_H
 
 #include "stm32f10x.h"
+#include <stdbool.h> 
 // #include <stdio.h>
 
 /**
@@ -117,6 +118,8 @@ typedef enum
 
 uart_status uart_receive(USART_TypeDef *pUSARTx, uint8_t *data,
                          uint16_t length);
+bool uart_check_contains_flash(USART_TypeDef *pUSARTx);
+
 uart_status uart_transmit_str(uint8_t *data);
 uart_status uart_transmit_ch(uint8_t data);
 

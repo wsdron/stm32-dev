@@ -5,6 +5,7 @@
 #include "flash.h"
 #include "stm32f10x.h"
 #include "xmodem.h"
+#include "bsp_SysTick.h"
 
 /**
  * @brief  The application entry point.
@@ -13,6 +14,9 @@
  */
 int main(void)
 {
+    /* Initialize systick to 1ms, enable its interrupt */
+	SysTick_Init();
+
     /* Initialize all configured peripherals */
     /* LED 端口初始化 */
     LED_GPIO_Config();
@@ -31,7 +35,45 @@ int main(void)
 
     /* If the button is pressed, then jump to the user application,
      * otherwise stay in the bootloader. */
-    if (Key_Scan(KEY1_GPIO_PORT, KEY1_GPIO_PIN) == KEY_OFF)
+    uint32_t system_time_start_of_bootloader_catch_ms = systick_get_tick();
+    bool bootloader_window_missed = false;
+    bool flash_request = false;
+
+    // check first flash request, the button push, 500ms timeout
+    if (!bootloader_window_missed && !flash_request)
+    {
+        if (Key_Scan(KEY1_GPIO_PORT, KEY1_GPIO_PIN) == KEY_ON)
+        {
+            flash_request = true;
+        }
+        
+        uint32_t system_time_ms = systick_get_tick();
+
+        if (system_time_ms - system_time_start_of_bootloader_catch_ms > BOOTLOADER_WINDOW_MS)
+        {
+            bootloader_window_missed = true;
+        }
+    }
+
+    bootloader_window_missed = false;
+    system_time_start_of_bootloader_catch_ms = systick_get_tick();
+    // check second flash request, the uart msg 'flash', 500ms timeout
+    if (!bootloader_window_missed && !flash_request)
+    {
+        if (uart_check_contains_flash(DEBUG_USARTx))
+        {
+            flash_request = true;
+        }
+        
+        uint32_t system_time_ms = systick_get_tick();
+
+        if (system_time_ms - system_time_start_of_bootloader_catch_ms > 10u * BOOTLOADER_WINDOW_MS)
+        {
+            bootloader_window_missed = true;
+        }
+    }
+
+    if (!flash_request)
     {
         Usart_SendString(DEBUG_USARTx, "Jumping to user application...\n\r");
         flash_jump_to_app();

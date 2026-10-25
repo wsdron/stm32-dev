@@ -13,7 +13,7 @@ ifeq ($(TEST_MODE), TRUE)
 	BUILD_DIR := build/test/$(TEST_SWC)
 	TOOLCHAIN_FILE := ""
 else
-	BUILD_DIR := build/release
+	BUILD_DIR := build/$(SOFTWARE)/release
 	TOOLCHAIN_FILE := cmake/gcc-arm-none-eabi.cmake
 endif
 
@@ -27,9 +27,9 @@ else
 endif
 
 ifeq ($(SOFTWARE),app)
-    BINARY_CFG := "program build/release/main.bin 0x08008000 verify reset exit" 
+    BINARY_CFG := "program build/app/release/main.bin 0x08008000 verify reset exit" 
 else ifeq ($(SOFTWARE),bootloader)
-    BINARY_CFG := "program proj-00-bootloader-spl/bin/main.bin 0x08000000 verify reset exit" 
+    BINARY_CFG := "program build/bootloader/release/main.bin 0x08000000 verify reset exit" 
 else
     $(error Invalid SOFTWARE '$(SOFTWARE)'. Must be 'app' or 'bootloader')
 endif
@@ -60,9 +60,12 @@ build: cmake
 flash: build/release/Makefile 
 	openocd -f $(INTERFACE_CFG) -f target/stm32f1x.cfg -c $(BINARY_CFG) 
 
+reset:
+	openocd -f $(INTERFACE_CFG) -f target/stm32f1x.cfg -c "init; reset run; shutdown"
+
 # test: build
 # 	ctest --test-dir ./build/test
 clean:
-	rm -rf build
+	rm -rf build/$(SOFTWARE)
 
 

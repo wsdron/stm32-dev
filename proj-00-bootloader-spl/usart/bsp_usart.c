@@ -16,12 +16,14 @@
  */
 
 #include "bsp_usart.h"
+#include "bsp_SysTick.h"
 
 /**
  * @brief  配置嵌套向量中断控制器NVIC
  * @param  无
  * @retval 无
  */
+#if 0
 static void NVIC_Configuration(void)
 {
     NVIC_InitTypeDef NVIC_InitStructure;
@@ -40,6 +42,7 @@ static void NVIC_Configuration(void)
     /* 初始化配置NVIC */
     NVIC_Init(&NVIC_InitStructure);
 }
+#endif
 
 /**
  * @brief  USART GPIO 配置,工作参数配置
@@ -186,6 +189,43 @@ uart_status uart_receive(USART_TypeDef *pUSART, uint8_t *data, uint16_t length)
 
     return status;
 }
+
+/**
+ * @brief  Collects up to 30 characters within 1ms and checks if 'flash' is present.
+ * @param  pUSARTx: Selected USART peripheral (e.g., USART1, USART2).
+ * @retval true if 'flash' is found within the received window, false otherwise.
+ */
+bool uart_check_contains_flash(USART_TypeDef *pUSARTx) {
+    uint8_t buffer[30] = {0};
+    uint32_t count = 0u;
+    uint32_t start_tick = systick_get_tick();
+
+    // Collect up to 30 characters or until 1 ms passes
+    while ((count < 30u) && ((systick_get_tick() - start_tick) < 1u)) {
+        uint8_t rx_byte = 0;
+        
+        // Attempt to read a single byte (non-blocking or short poll inside uart_receive)
+        if (uart_receive(pUSARTx, &rx_byte, 1) == UART_OK) {
+            buffer[count++] = rx_byte;
+        }
+    }
+
+    // Search the collected bytes for the substring "flash"
+    if (count >= 5) {
+        for (uint32_t i = 0; i <= (count - 5); i++) {
+            if (buffer[i]     == 'f' &&
+                buffer[i + 1] == 'l' &&
+                buffer[i + 2] == 'a' &&
+                buffer[i + 3] == 's' &&
+                buffer[i + 4] == 'h') {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 /*
 ///重定向c库函数printf到串口，重定向后可使用printf函数
 int fputc(int ch, FILE *f)
