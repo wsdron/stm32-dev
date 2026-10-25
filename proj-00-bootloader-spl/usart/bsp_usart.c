@@ -166,21 +166,18 @@ void Usart_SendHalfWord(USART_TypeDef *pUSARTx, uint16_t ch)
 uart_status uart_receive(USART_TypeDef *pUSART, uint8_t *data, uint16_t length)
 {
     uart_status status = UART_OK;
-    uint32_t timeout;
+    uint32_t start_tick = systick_get_tick();
 
     for (uint16_t i = 0; i < length; i++)
     {
-        // 1sec equivalent of counts
-        timeout = 12000000u;
-
         // Wait until the RX Buffer Not Empty (RXNE) flag is set
+        // or 1ms time out
         while (RESET == USART_GetFlagStatus(pUSART, USART_FLAG_RXNE))
         {
-            if (timeout == 0)
+            if (systick_get_tick() - start_tick > 1u)
             {
                 return UART_ERROR; // or UART_ERROR based on your enum
             }
-            timeout--;
         }
 
         // Read received byte (clears the RXNE flag automatically)
