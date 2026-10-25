@@ -199,6 +199,7 @@ bool uart_check_contains_flash(USART_TypeDef *pUSARTx) {
     uint8_t buffer[30] = {0};
     uint32_t count = 0u;
     uint32_t start_tick = systick_get_tick();
+    bool return_val = false;
 
     // Collect up to 30 characters or until 1 ms passes
     while ((count < 30u) && ((systick_get_tick() - start_tick) < 1u)) {
@@ -218,12 +219,12 @@ bool uart_check_contains_flash(USART_TypeDef *pUSARTx) {
                 buffer[i + 2] == 'a' &&
                 buffer[i + 3] == 's' &&
                 buffer[i + 4] == 'h') {
-                return true;
+                return_val = true;
             }
         }
     }
 
-    return false;
+    return return_val;
 }
 
 /*

@@ -29,7 +29,7 @@ void print_uint_var(uint32_t var, char* var_name)
     char hex[10];
     uint_to_hex_string(var, hex, 1);
     Usart_SendString(DEBUG_USARTx, var_name);
-    Usart_SendString(DEBUG_USARTx, "\n\r");
+    Usart_SendString(DEBUG_USARTx, ": ");
     Usart_SendString(DEBUG_USARTx, hex);
     Usart_SendString(DEBUG_USARTx, "\n\r");
 }
@@ -64,10 +64,12 @@ int main(void)
      * otherwise stay in the bootloader. */
     uint32_t system_time_start_of_bootloader_catch_ms = systick_get_tick();
     bool bootloader_window_missed = false;
-    bool flash_request = false;
+    /* Volatile, because the value is changed by a polling function and read
+     * afterwards, an optimizing compiler must not be able to remove the poll. */
+    volatile bool flash_request = false;
 
     // check first flash request, the button push, 500ms timeout
-    if (!bootloader_window_missed && !flash_request)
+    while (!bootloader_window_missed && !flash_request)
     {
         if (Key_Scan(KEY1_GPIO_PORT, KEY1_GPIO_PIN) == KEY_ON)
         {
@@ -82,11 +84,11 @@ int main(void)
         }
     }
 
-    bootloader_window_missed = false;
+    bool bootloader_window2_missed = false;
     system_time_start_of_bootloader_catch_ms = systick_get_tick();
     print_uint_var(system_time_start_of_bootloader_catch_ms, "system_time_start_of_bootloader_catch_ms");
     // check second flash request, the uart msg 'flash', 500ms timeout
-    if (!bootloader_window_missed && !flash_request)
+    while (!bootloader_window2_missed && !flash_request)
     {
         if (uart_check_contains_flash(DEBUG_USARTx))
         {
@@ -97,13 +99,14 @@ int main(void)
 
         if (system_time_ms - system_time_start_of_bootloader_catch_ms > 10u * BOOTLOADER_WINDOW_MS)
         {
-            bootloader_window_missed = true;
+            bootloader_window2_missed = true;
         }
     }
     
-    system_time_start_of_bootloader_catch_ms = systick_get_tick();
-    print_uint_var(system_time_start_of_bootloader_catch_ms, "system_time_start_of_bootloader_catch_ms");
+    uint32_t system_time_end_of_bootloader_catch_ms = systick_get_tick();
+    print_uint_var(system_time_end_of_bootloader_catch_ms, "system_time_end_of_bootloader_catch_ms");
     print_uint_var(flash_request, "flash_request");
+    print_uint_var(bootloader_window2_missed, "bootloader_window2_missed");
 
     if (flash_request)
     {
