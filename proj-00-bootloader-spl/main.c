@@ -8,6 +8,33 @@
 #include "bsp_SysTick.h"
 
 /**
+ * @brief  Converts a 32-bit unsigned integer to an 8-character hex string.
+ * @param  value: The 32-bit unsigned integer to convert.
+ * @param  result: Pointer to output buffer (must be at least 9 bytes for '\0').
+ * @param  uppercase: Set to 1 for "00000011", 0 for lowercase.
+ */
+void uint_to_hex_string(uint32_t value, char *result, uint8_t uppercase) {
+    const char *hex_chars = uppercase ? "0123456789ABCDEF" : "0123456789abcdef";
+
+    for (int i = 0; i < 8; i++) {
+        // Shift by 28, 24, 20, 16, 12, 8, 4, 0 bits
+        uint8_t nibble = (value >> ((7 - i) * 4)) & 0x0F;
+        result[i] = hex_chars[nibble];
+    }
+    result[8] = '\0';
+}
+
+void print_uint_var(uint32_t var, char* var_name)
+{
+    char hex[10];
+    uint_to_hex_string(var, hex, 1);
+    Usart_SendString(DEBUG_USARTx, var_name);
+    Usart_SendString(DEBUG_USARTx, "\n\r");
+    Usart_SendString(DEBUG_USARTx, hex);
+    Usart_SendString(DEBUG_USARTx, "\n\r");
+}
+
+/**
  * @brief  The application entry point.
  *
  * @retval None
@@ -57,6 +84,7 @@ int main(void)
 
     bootloader_window_missed = false;
     system_time_start_of_bootloader_catch_ms = systick_get_tick();
+    print_uint_var(system_time_start_of_bootloader_catch_ms, "system_time_start_of_bootloader_catch_ms");
     // check second flash request, the uart msg 'flash', 500ms timeout
     if (!bootloader_window_missed && !flash_request)
     {
@@ -72,8 +100,16 @@ int main(void)
             bootloader_window_missed = true;
         }
     }
+    
+    system_time_start_of_bootloader_catch_ms = systick_get_tick();
+    print_uint_var(system_time_start_of_bootloader_catch_ms, "system_time_start_of_bootloader_catch_ms");
+    print_uint_var(flash_request, "flash_request");
 
-    if (!flash_request)
+    if (flash_request)
+    {
+        Usart_SendString(DEBUG_USARTx, "flash request received...\n\r");
+    }
+    else
     {
         Usart_SendString(DEBUG_USARTx, "Jumping to user application...\n\r");
         flash_jump_to_app();
