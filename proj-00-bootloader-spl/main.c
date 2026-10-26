@@ -64,9 +64,7 @@ int main(void)
      * otherwise stay in the bootloader. */
     uint32_t system_time_start_of_bootloader_catch_ms = systick_get_tick();
     bool bootloader_window_missed = false;
-    /* Volatile, because the value is changed by a polling function and read
-     * afterwards, an optimizing compiler must not be able to remove the poll. */
-    volatile bool flash_request = false;
+    bool flash_request = false;
 
     // check first flash request, the button push, 500ms timeout
     while (!bootloader_window_missed && !flash_request)
@@ -102,11 +100,6 @@ int main(void)
             bootloader_window2_missed = true;
         }
     }
-    
-    uint32_t system_time_end_of_bootloader_catch_ms = systick_get_tick();
-    print_uint_var(system_time_end_of_bootloader_catch_ms, "system_time_end_of_bootloader_catch_ms");
-    print_uint_var(flash_request, "flash_request");
-    print_uint_var(bootloader_window2_missed, "bootloader_window2_missed");
 
     if (flash_request)
     {

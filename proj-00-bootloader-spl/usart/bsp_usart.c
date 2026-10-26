@@ -171,10 +171,10 @@ uart_status uart_receive(USART_TypeDef *pUSART, uint8_t *data, uint16_t length)
     for (uint16_t i = 0; i < length; i++)
     {
         // Wait until the RX Buffer Not Empty (RXNE) flag is set
-        // or 1ms time out
+        // or 1000ms time out
         while (RESET == USART_GetFlagStatus(pUSART, USART_FLAG_RXNE))
         {
-            if (systick_get_tick() - start_tick > 1u)
+            if (systick_get_tick() - start_tick > 1000u)
             {
                 return UART_ERROR; // or UART_ERROR based on your enum
             }
@@ -198,8 +198,8 @@ bool uart_check_contains_flash(USART_TypeDef *pUSARTx) {
     uint32_t start_tick = systick_get_tick();
     bool return_val = false;
 
-    // Collect up to 30 characters or until 1 ms passes
-    while ((count < 30u) && ((systick_get_tick() - start_tick) < 1u)) {
+    // Collect up to 30 characters or until 100 ms passes
+    while ((count < 30u) && ((systick_get_tick() - start_tick) < 100u)) {
         uint8_t rx_byte = 0;
         
         // Attempt to read a single byte (non-blocking or short poll inside uart_receive)
