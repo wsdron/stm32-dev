@@ -80,6 +80,11 @@ int main(void)
         {
             bootloader_window_missed = true;
         }
+        
+        if (system_time_ms - system_time_start_of_bootloader_catch_ms > 100u)
+        {
+            Usart_SendByte(DEBUG_USARTx, 'B');
+        }
     }
 
     bool bootloader_window2_missed = false;
@@ -99,6 +104,8 @@ int main(void)
         {
             bootloader_window2_missed = true;
         }
+
+        Usart_SendByte(DEBUG_USARTx, 'B');
     }
 
     if (flash_request)
