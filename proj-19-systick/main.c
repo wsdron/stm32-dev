@@ -2,6 +2,8 @@
 #include "stm32f10x.h"
 #include "bsp_SysTick.h"
 #include "bsp_led.h"
+#include <stdbool.h> 
+#include "bsp_usart.h"
 
 /*
  * t : 定时时间 
@@ -20,78 +22,68 @@ int main(void)
 	/* LED 端口初始化 */
 	LED_GPIO_Config();
 
-	/* 配置SysTick 为10us中断一次 */
+    // configure the tick as 1ms
 	SysTick_Init();
 
-//	for(;;)
-//	{
-
-//		LED1( ON ); 
-//	    Delay_us(100000);    	// 100000 * 10us = 1000ms
-//		//Delay_ms(100);
-//		LED1( OFF );
-//	  
-//		LED2( ON );
-//	    Delay_us(100000);		// 100000 * 10us = 1000ms
-//		//Delay_ms(100);
-//		LED2( OFF );
-//	
-//		LED3( ON );
-//	    Delay_us(100000);		// 100000 * 10us = 1000ms
-//		//Delay_ms(100);
-//		LED3( OFF );
-//	}     
+    /*初始化USART 配置模式为 115200 8-N-1，不靠中断接收，靠标志位接收*/
+    USART_Config();
 
 	for(;;)
 	{
+        // control RGB led on/off every 1 sec
+        static uint32_t system_time = 0u; 
+        uint32_t system_time_previous = 0u; 
 
-		LED1( ON ); 
-		SysTick_Delay_Ms( 1000 );
-		LED1( OFF );
-	  
-		LED2( ON );
-		SysTick_Delay_Ms( 1000 );
-		LED2( OFF );
-	
-		LED3( ON );
-		SysTick_Delay_Ms( 1000 );
-		LED3( OFF );
+        bool led_control = false;
+
+        system_time_previous = system_time;
+        system_time = systick_get_tick();
+
+        if ( !(system_time % 1000u) &&
+                (system_time_previous % 1000u))
+        {
+           if (system_time / 1000u % 2)
+           {
+               led_control = ON;
+           }
+           else
+           {
+               led_control = OFF;
+           }
+
+           if (1u == (system_time / 1000 % 6) ||
+                   2u == (system_time / 1000 % 6))
+           {
+               LED1(led_control);
+           }
+           else if (3u == (system_time / 1000 % 6) ||
+                   4u == (system_time / 1000 % 6))
+           {
+               LED2(led_control);
+           }
+           else
+           {
+               LED3(led_control);
+           }
+
+           // capture bootloader entry command
+           // Define the target string
+           char target[] = "bootloader";
+           
+           // Call the function, passing the string and its length (excluding the null terminator)
+           bool found = uart_check_contains_flash(target, sizeof(target) - 1);
+           
+           if (found)
+           {
+               // Trigger the software reset
+               NVIC_SystemReset();
+           }
+           else
+           {
+               usart_reset_buffer_cursor();
+           }
+        }
+
 	} 
 	
 }
-
-
-
-
-
-//  ============================================================================================================================
-//    NVIC_PriorityGroup   | NVIC_IRQChannelPreemptionPriority | NVIC_IRQChannelSubPriority  | Description
-//  ============================================================================================================================
-//   NVIC_PriorityGroup_0  |                0                  |            0-15             |   0 bits for 
-//                         |                                   |                             |   4 bits for subpriority
-//  ----------------------------------------------------------------------------------------------------------------------------
-//   NVIC_PriorityGroup_1  |                0-1                |            0-7              |   1 bits for pre-emption priority
-//                         |                                   |                             |   3 bits for subpriority
-//  ----------------------------------------------------------------------------------------------------------------------------    
-//   NVIC_PriorityGroup_2  |                0-3                |            0-3              |   2 bits for pre-emption priority
-//                         |                                   |                             |   2 bits for subpriority
-//  ----------------------------------------------------------------------------------------------------------------------------    
-//   NVIC_PriorityGroup_3  |                0-7                |            0-1              |   3 bits for pre-emption priority
-//                         |                                   |                             |   1 bits for subpriority
-//  ----------------------------------------------------------------------------------------------------------------------------    
-//   NVIC_PriorityGroup_4  |                0-15               |            0                |   4 bits for pre-emption priority
-//                         |                                   |                             |   0 bits for subpriority                       
-//  ============================================================================================================================
-
-
-
-
-
-
-
-
-
-
-
-
-/*********************************************END OF FILE**********************/

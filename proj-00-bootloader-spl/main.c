@@ -89,7 +89,6 @@ int main(void)
 
     bool bootloader_window2_missed = false;
     system_time_start_of_bootloader_catch_ms = systick_get_tick();
-    print_uint_var(system_time_start_of_bootloader_catch_ms, "system_time_start_of_bootloader_catch_ms");
     // check second flash request, the uart msg 'flash', 500ms timeout
     while (!bootloader_window2_missed && !flash_request)
     {

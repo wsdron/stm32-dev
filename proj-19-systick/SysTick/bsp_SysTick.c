@@ -3,7 +3,8 @@
 #include "core_cm3.h"
 #include "misc.h"
 
-static __IO u32 TimingDelay;
+static __IO uint32_t TimingDelay;
+static __IO uint32_t ticker_ms;
  
 /**
   * @brief  启动系统滴答定时器 SysTick
@@ -17,11 +18,21 @@ void SysTick_Init(void)
 	 * SystemFrequency / 1000000 1us中断一次
 	 */
 //	if (SysTick_Config(SystemFrequency / 100000))	// ST3.0.0库版本
-	if (SysTick_Config(SystemCoreClock / 100000))	// ST3.5.0库版本
+	if (SysTick_Config(SystemCoreClock / 1000))	// ST3.5.0库版本
 	{ 
 		/* Capture error */ 
 		while (1);
 	}
+}
+
+void systick_tick_increment(void)
+{
+    ticker_ms++;
+}
+
+uint32_t systick_get_tick(void)
+{
+    return ticker_ms;
 }
 
 /**
@@ -30,7 +41,7 @@ void SysTick_Init(void)
   *		@arg nTime: Delay_us( 1 ) 则实现的延时为 1 * 10us = 10us
   * @retval  无
   */
-void Delay_us(__IO u32 nTime)
+void Delay_us(__IO uint32_t nTime)
 { 
 	TimingDelay = nTime;	
 
@@ -54,31 +65,6 @@ void TimingDelay_Decrement(void)
 	}
 }
 
-#if 0
-// 这个 固件库函数 在 core_cm3.h中
-static __INLINE uint32_t SysTick_Config(uint32_t ticks)
-{ 
-  // reload 寄存器为24bit，最大值为2^24
-	if (ticks > SysTick_LOAD_RELOAD_Msk)  return (1);
-  
-  // 配置 reload 寄存器的初始值	
-  SysTick->LOAD  = (ticks & SysTick_LOAD_RELOAD_Msk) - 1;
-	
-	// 配置中断优先级为 1<<4-1 = 15，优先级为最低
-  NVIC_SetPriority (SysTick_IRQn, (1<<__NVIC_PRIO_BITS) - 1); 
-	
-	// 配置 counter 计数器的值
-  SysTick->VAL   = 0;
-	
-	// 配置systick 的时钟为 72M
-	// 使能中断
-	// 使能systick
-  SysTick->CTRL  = SysTick_CTRL_CLKSOURCE_Msk | 
-                   SysTick_CTRL_TICKINT_Msk   | 
-                   SysTick_CTRL_ENABLE_Msk;                    
-  return (0); 
-}
-#endif
 
 // couter 减1的时间 等于 1/systick_clk
 // 当counter 从 reload 的值减小到0的时候，为一个循环，如果开启了中断则执行中断服务程序，
