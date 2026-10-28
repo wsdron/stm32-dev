@@ -68,9 +68,7 @@ int main(void)
                 LED3(led_control);
             }
 
-            // capture bootloader entry command
-            // Define the target string
-            char target[] = "bootloader";
+            char target[] = "reset";
 
             // Call the function, passing the string and its length (excluding
             // the null terminator)
