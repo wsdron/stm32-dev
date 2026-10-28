@@ -1,11 +1,11 @@
 #include "main.h"
+#include "bsp_SysTick.h"
 #include "bsp_key.h"
 #include "bsp_led.h"
 #include "bsp_usart.h"
 #include "flash.h"
 #include "stm32f10x.h"
 #include "xmodem.h"
-#include "bsp_SysTick.h"
 
 /**
  * @brief  Converts a 32-bit unsigned integer to an 8-character hex string.
@@ -13,10 +13,12 @@
  * @param  result: Pointer to output buffer (must be at least 9 bytes for '\0').
  * @param  uppercase: Set to 1 for "00000011", 0 for lowercase.
  */
-void uint_to_hex_string(uint32_t value, char *result, uint8_t uppercase) {
+void uint_to_hex_string(uint32_t value, char *result, uint8_t uppercase)
+{
     const char *hex_chars = uppercase ? "0123456789ABCDEF" : "0123456789abcdef";
 
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 8; i++)
+    {
         // Shift by 28, 24, 20, 16, 12, 8, 4, 0 bits
         uint8_t nibble = (value >> ((7 - i) * 4)) & 0x0F;
         result[i] = hex_chars[nibble];
@@ -24,7 +26,7 @@ void uint_to_hex_string(uint32_t value, char *result, uint8_t uppercase) {
     result[8] = '\0';
 }
 
-void print_uint_var(uint32_t var, char* var_name)
+void print_uint_var(uint32_t var, char *var_name)
 {
     char hex[10];
     uint_to_hex_string(var, hex, 1);
@@ -42,14 +44,13 @@ void print_uint_var(uint32_t var, char* var_name)
 int main(void)
 {
     /* Initialize systick to 1ms, enable its interrupt */
-	SysTick_Init();
+    SysTick_Init();
 
     /* Initialize all configured peripherals */
     /* LED 端口初始化 */
     LED_GPIO_Config();
     LED3(ON);
 
-    /*初始化USART 配置模式为 115200 8-N-1，不靠中断接收，靠标志位接收*/
     USART_Config();
 
     // init the key GPIO
@@ -73,17 +74,13 @@ int main(void)
         {
             flash_request = true;
         }
-        
+
         uint32_t system_time_ms = systick_get_tick();
 
-        if (system_time_ms - system_time_start_of_bootloader_catch_ms > BOOTLOADER_WINDOW_MS)
+        if (system_time_ms - system_time_start_of_bootloader_catch_ms >
+            BOOTLOADER_WINDOW_MS)
         {
             bootloader_window_missed = true;
-        }
-        
-        if (system_time_ms - system_time_start_of_bootloader_catch_ms > 100u)
-        {
-            Usart_SendByte(DEBUG_USARTx, 'B');
         }
     }
 
@@ -92,19 +89,43 @@ int main(void)
     // check second flash request, the uart msg 'flash', 500ms timeout
     while (!bootloader_window2_missed && !flash_request)
     {
-        if (uart_check_contains_flash(DEBUG_USARTx))
-        {
-            flash_request = true;
-        }
-        
-        uint32_t system_time_ms = systick_get_tick();
+        static uint32_t system_time = 0u;
+        uint32_t system_time_previous = 0u;
 
-        if (system_time_ms - system_time_start_of_bootloader_catch_ms > 10u * BOOTLOADER_WINDOW_MS)
+        system_time_previous = system_time;
+        system_time = systick_get_tick();
+
+        // check if uart msg 'flash' received every 100ms
+        if (!(system_time % 100u) && (system_time_previous % 100u))
+        {
+            // indicate the status of waiting for flash request
+            Usart_SendByte(DEBUG_USARTx, 'B');
+
+            char target[] = "flash";
+
+            // Call the function, passing the string and its length (excluding
+            // the null terminator)
+            bool found = uart_check_contains_flash(target, sizeof(target) - 1);
+
+            if (found)
+            {
+                flash_request = true;
+
+                // disable the interrupt of uart, as the flash process is based
+                // on uart with status bit
+                USART_ITConfig(DEBUG_USARTx, USART_IT_RXNE, DISABLE);
+            }
+            else
+            {
+                usart_reset_buffer_cursor();
+            }
+        }
+
+        if (system_time - system_time_start_of_bootloader_catch_ms >
+            10u * BOOTLOADER_WINDOW_MS)
         {
             bootloader_window2_missed = true;
         }
-
-        Usart_SendByte(DEBUG_USARTx, 'B');
     }
 
     if (flash_request)

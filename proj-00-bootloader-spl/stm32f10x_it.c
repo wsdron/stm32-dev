@@ -26,6 +26,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x_it.h"
 #include "bsp_SysTick.h"
+#include "bsp_usart.h"
 
 /** @addtogroup STM32F10x_StdPeriph_Template
  * @{
@@ -127,11 +128,17 @@ void PendSV_Handler(void) {}
  * @param  None
  * @retval None
  */
-void SysTick_Handler(void) 
-{
-    systick_tick_increment();
-}
+void SysTick_Handler(void) { systick_tick_increment(); }
 
+void DEBUG_USART_IRQHandler(void)
+{
+    uint8_t ucTemp;
+    if (USART_GetITStatus(DEBUG_USARTx, USART_IT_RXNE) != RESET)
+    {
+        ucTemp = USART_ReceiveData(DEBUG_USARTx);
+        usart_append_buffer(ucTemp);
+    }
+}
 
 void KEY1_IRQHandler(void) {}
 

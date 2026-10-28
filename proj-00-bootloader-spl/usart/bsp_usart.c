@@ -18,12 +18,14 @@
 #include "bsp_usart.h"
 #include "bsp_SysTick.h"
 
+static volatile char buffer[UART_BUFF_SIZE] = {0};
+static volatile uint8_t buffer_cursor = 0u;
+
 /**
  * @brief  配置嵌套向量中断控制器NVIC
  * @param  无
  * @retval 无
  */
-#if 0
 static void NVIC_Configuration(void)
 {
     NVIC_InitTypeDef NVIC_InitStructure;
@@ -42,7 +44,6 @@ static void NVIC_Configuration(void)
     /* 初始化配置NVIC */
     NVIC_Init(&NVIC_InitStructure);
 }
-#endif
 
 /**
  * @brief  USART GPIO 配置,工作参数配置
@@ -88,13 +89,11 @@ void USART_Config(void)
     // 完成串口的初始化配置
     USART_Init(DEBUG_USARTx, &USART_InitStructure);
 
-    /*
-        // 串口中断优先级配置
-        NVIC_Configuration();
+    // 串口中断优先级配置
+    NVIC_Configuration();
 
-        // 使能串口接收中断
-        USART_ITConfig(DEBUG_USARTx, USART_IT_RXNE, ENABLE);
-        */
+    // 使能串口接收中断
+    USART_ITConfig(DEBUG_USARTx, USART_IT_RXNE, ENABLE);
 
     // 使能串口
     USART_Cmd(DEBUG_USARTx, ENABLE);
@@ -163,6 +162,46 @@ void Usart_SendHalfWord(USART_TypeDef *pUSARTx, uint16_t ch)
         ;
 }
 
+// append char received to buffer, if buffer full, no longer add to buffer
+void usart_append_buffer(char received)
+{
+    if (buffer_cursor < UART_BUFF_SIZE)
+    {
+        buffer[buffer_cursor] = received;
+        buffer_cursor++;
+    }
+}
+
+// reset buffer cursor
+void usart_reset_buffer_cursor(void) { buffer_cursor = 0u; }
+
+// check if buffer contains target string (max 30)
+bool uart_check_contains_flash(char *target_string, uint8_t size_string)
+{
+    bool return_val = false;
+
+    if (size_string <= UART_BUFF_SIZE)
+    {
+        for (uint32_t i = 0; i <= (UART_BUFF_SIZE - size_string); i++)
+        {
+            uint8_t equal_char_count = 0u;
+            for (uint32_t j = 0; j < size_string; j++)
+            {
+                if (target_string[j] == buffer[i + j])
+                {
+                    equal_char_count++;
+                }
+            }
+            if (equal_char_count == size_string)
+            {
+                return_val = true;
+            }
+        }
+    }
+
+    return return_val;
+}
+
 uart_status uart_receive(USART_TypeDef *pUSART, uint8_t *data, uint16_t length)
 {
     uart_status status = UART_OK;
@@ -185,43 +224,6 @@ uart_status uart_receive(USART_TypeDef *pUSART, uint8_t *data, uint16_t length)
     }
 
     return status;
-}
-
-/**
- * @brief  Collects up to 30 characters within 1ms and checks if 'flash' is present.
- * @param  pUSARTx: Selected USART peripheral (e.g., USART1, USART2).
- * @retval true if 'flash' is found within the received window, false otherwise.
- */
-bool uart_check_contains_flash(USART_TypeDef *pUSARTx) {
-    uint8_t buffer[30] = {0};
-    uint32_t count = 0u;
-    uint32_t start_tick = systick_get_tick();
-    bool return_val = false;
-
-    // Collect up to 30 characters or until 100 ms passes
-    while ((count < 30u) && ((systick_get_tick() - start_tick) < 100u)) {
-        uint8_t rx_byte = 0;
-        
-        // Attempt to read a single byte (non-blocking or short poll inside uart_receive)
-        if (uart_receive(pUSARTx, &rx_byte, 1) == UART_OK) {
-            buffer[count++] = rx_byte;
-        }
-    }
-
-    // Search the collected bytes for the substring "flash"
-    if (count >= 5) {
-        for (uint32_t i = 0; i <= (count - 5); i++) {
-            if (buffer[i]     == 'f' &&
-                buffer[i + 1] == 'l' &&
-                buffer[i + 2] == 'a' &&
-                buffer[i + 3] == 's' &&
-                buffer[i + 4] == 'h') {
-                return_val = true;
-            }
-        }
-    }
-
-    return return_val;
 }
 
 /*

@@ -2,8 +2,8 @@
 #define __USART_H
 
 #include "stm32f10x.h"
-#include <stdbool.h> 
 // #include <stdio.h>
+#include <stdbool.h>
 
 /**
  * 串口宏定义，不同的串口挂载的总线和IO不一样，移植时需要修改这几个宏
@@ -28,6 +28,8 @@
 
 #define DEBUG_USART_IRQ USART1_IRQn
 #define DEBUG_USART_IRQHandler USART1_IRQHandler
+
+#define UART_BUFF_SIZE (30u)
 
 // 串口2-USART2
 // #define  DEBUG_USARTx                   USART2
@@ -106,8 +108,9 @@ void Usart_SendByte(USART_TypeDef *pUSARTx, uint8_t ch);
 void Usart_SendString(USART_TypeDef *pUSARTx, char *str);
 void Usart_SendHalfWord(USART_TypeDef *pUSARTx, uint16_t ch);
 
-/* Timeout for HAL. */
-#define UART_TIMEOUT ((uint16_t)1000u)
+void usart_append_buffer(char received);
+void usart_reset_buffer_cursor(void);
+bool uart_check_contains_flash(char *target_string, uint8_t size_string);
 
 /* Status report for the functions. */
 typedef enum
@@ -118,9 +121,5 @@ typedef enum
 
 uart_status uart_receive(USART_TypeDef *pUSARTx, uint8_t *data,
                          uint16_t length);
-bool uart_check_contains_flash(USART_TypeDef *pUSARTx);
-
-uart_status uart_transmit_str(uint8_t *data);
-uart_status uart_transmit_ch(uint8_t data);
 
 #endif /* __USART_H */
