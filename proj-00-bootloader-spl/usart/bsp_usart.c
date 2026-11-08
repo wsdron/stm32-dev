@@ -16,6 +16,10 @@
  */
 
 #include "bsp_usart.h"
+#include "bsp_SysTick.h"
+
+static volatile char buffer[UART_BUFF_SIZE] = {0};
+static volatile uint8_t buffer_cursor = 0u;
 
 /**
  * @brief  配置嵌套向量中断控制器NVIC
@@ -85,13 +89,11 @@ void USART_Config(void)
     // 完成串口的初始化配置
     USART_Init(DEBUG_USARTx, &USART_InitStructure);
 
-    /*
-        // 串口中断优先级配置
-        NVIC_Configuration();
+    // 串口中断优先级配置
+    NVIC_Configuration();
 
-        // 使能串口接收中断
-        USART_ITConfig(DEBUG_USARTx, USART_IT_RXNE, ENABLE);
-        */
+    // 使能串口接收中断
+    USART_ITConfig(DEBUG_USARTx, USART_IT_RXNE, ENABLE);
 
     // 使能串口
     USART_Cmd(DEBUG_USARTx, ENABLE);
@@ -160,24 +162,61 @@ void Usart_SendHalfWord(USART_TypeDef *pUSARTx, uint16_t ch)
         ;
 }
 
+// append char received to buffer, if buffer full, no longer add to buffer
+void usart_append_buffer(char received)
+{
+    if (buffer_cursor < UART_BUFF_SIZE)
+    {
+        buffer[buffer_cursor] = received;
+        buffer_cursor++;
+    }
+}
+
+// reset buffer cursor
+void usart_reset_buffer_cursor(void) { buffer_cursor = 0u; }
+
+// check if buffer contains target string (max 30)
+bool uart_check_contains_flash(char *target_string, uint8_t size_string)
+{
+    bool return_val = false;
+
+    if (size_string <= UART_BUFF_SIZE)
+    {
+        for (uint32_t i = 0; i <= (UART_BUFF_SIZE - size_string); i++)
+        {
+            uint8_t equal_char_count = 0u;
+            for (uint32_t j = 0; j < size_string; j++)
+            {
+                if (target_string[j] == buffer[i + j])
+                {
+                    equal_char_count++;
+                }
+            }
+            if (equal_char_count == size_string)
+            {
+                return_val = true;
+            }
+        }
+    }
+
+    return return_val;
+}
+
 uart_status uart_receive(USART_TypeDef *pUSART, uint8_t *data, uint16_t length)
 {
     uart_status status = UART_OK;
-    uint32_t timeout;
+    uint32_t start_tick = systick_get_tick();
 
     for (uint16_t i = 0; i < length; i++)
     {
-        // 1sec equivalent of counts
-        timeout = 12000000u;
-
         // Wait until the RX Buffer Not Empty (RXNE) flag is set
+        // or 1000ms time out
         while (RESET == USART_GetFlagStatus(pUSART, USART_FLAG_RXNE))
         {
-            if (timeout == 0)
+            if (systick_get_tick() - start_tick > 1000u)
             {
                 return UART_ERROR; // or UART_ERROR based on your enum
             }
-            timeout--;
         }
 
         // Read received byte (clears the RXNE flag automatically)
@@ -186,6 +225,7 @@ uart_status uart_receive(USART_TypeDef *pUSART, uint8_t *data, uint16_t length)
 
     return status;
 }
+
 /*
 ///重定向c库函数printf到串口，重定向后可使用printf函数
 int fputc(int ch, FILE *f)

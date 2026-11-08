@@ -19,6 +19,8 @@ set(CPU_PARAMETERS
 
 set(PROJECT_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR})    
 
+add_compile_options(-save-temps=obj)
+
 # Normalize input to lowercase to make the check case-insensitive
 message("TARGET_BOARD passed down value '${TARGET_BOARD}'")
 string(TOLOWER "${TARGET_BOARD}" TARGET_BOARD_LOWER)

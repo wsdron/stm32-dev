@@ -104,4 +104,5 @@ sudo apt install -y python3-serial
 pip3 install xmodem --break-system-packages
  
 ### bootloader based flash, the flash command 
-python3 term_flasher.py {path_to_binary} /dev/ttyUSB0
+python term_flasher.py {path_to_binary} 
+python term_flasher_wireless.py {path-to-binary} 
