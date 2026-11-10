@@ -27,7 +27,7 @@ else
 endif
 
 ifeq ($(SOFTWARE),app)
-    BINARY_CFG := "program build/app/release/main.bin 0x08008000 verify reset exit" 
+    BINARY_CFG := "program build/app/release/main.bin 0x08000000 verify reset exit" 
 else ifeq ($(SOFTWARE),bootloader)
     BINARY_CFG := "program build/bootloader/release/main.bin 0x08000000 verify reset exit" 
 else

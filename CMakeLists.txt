@@ -30,6 +30,7 @@ if(TARGET_BOARD_LOWER STREQUAL "youfang")
     set(STARTUP_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/flash_stm32f103c8t6/startup_stm32f103c8tx.s)
     set(MCU_LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/flash_stm32f103c8t6/STM32F103C8T6_FLASH.ld)
     set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT})
+    set(TARGET_DEVICE "STM32F10X_MD")
 
 elseif(TARGET_BOARD_LOWER STREQUAL "embedfire")
     message(STATUS "Configuring for Embedfire board")
@@ -42,6 +43,7 @@ elseif(TARGET_BOARD_LOWER STREQUAL "embedfire")
     endif()
 
     set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT})
+    set(TARGET_DEVICE "STM32F10X_HD")
 
 else()
     message(FATAL_ERROR "Invalid TARGET_BOARD '${TARGET_BOARD}'. Must be 'youfang' or 'embedfire'.")
@@ -110,7 +112,7 @@ if(NOT TEST_MODE)
         target_compile_options(${EXECUTABLE} PRIVATE
             ${CPU_PARAMETERS}
                 -DUSE_STDPERIPH_DRIVER
-                -DSTM32F10X_HD
+                -D${TARGET_DEVICE}
                 -DSTM32F103xE
                 -DUSE_HAL_DRIVER
                 -D${SOFTWARE_FLAG}
@@ -138,8 +140,8 @@ if(NOT TEST_MODE)
     else()
         target_compile_options(${EXECUTABLE} PRIVATE
         ${CPU_PARAMETERS}
-            -DUSE_HAL_DRIVER 
-            -DSTM32F10X_HD
+            -DUSE_STDPERIPH_DRIVER
+            -D${TARGET_DEVICE}
             -DSTM32F103xE
             -DUSE_HAL_DRIVER
             -D${SOFTWARE_FLAG}

@@ -106,3 +106,6 @@ pip3 install xmodem --break-system-packages
 ### bootloader based flash, the flash command 
 python term_flasher.py {path_to_binary} 
 python term_flasher_wireless.py {path-to-binary} 
+    - pre-requisite, one time setup
+        - pair hc-06 with host PC in bluetooth, password, 1234, device name xx, it is expected to see device not connected in bluetooth
+        - bind the bluetooth device to rfcomm device 0 channel 1, sudo rfcomm bind rfcomm0  98:DA:60:0F:E5:27 1

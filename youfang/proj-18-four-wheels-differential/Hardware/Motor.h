@@ -1,6 +1,8 @@
 #ifndef _MOTOR_H_
 #define _MOTOR_H_
 
+#include <stdint.h>
+
 void Motor_Init(void);
 void Car_Forward(uint16_t Speed);
 void Car_Backward(uint16_t Speed);
@@ -13,4 +15,3 @@ void Motor2_SetSpeed(uint8_t Dir, uint16_t Speed);
 void Motor3_SetSpeed(uint8_t Dir, uint16_t Speed);
 void Motor4_SetSpeed(uint8_t Dir, uint16_t Speed);
 #endif
-
