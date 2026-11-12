@@ -6,6 +6,8 @@
 #include "flash.h"
 #include "stm32f10x.h"
 #include "xmodem.h"
+#include "Motor.h"
+#include "OLED.h"
 
 /**
  * @brief  Converts a 32-bit unsigned integer to an 8-character hex string.
@@ -48,13 +50,24 @@ int main(void)
 
     /* Initialize all configured peripherals */
     /* LED 端口初始化 */
+#ifdef embedfire 
     LED_GPIO_Config();
     LED3(ON);
+#endif
+
+#ifdef youfang 
+    Motor_Init();
+
+    OLED_Init();
+    OLED_ShowString(1, 1, "bootloader mode");
+#endif
 
     USART_Config();
 
+#ifdef embedfire 
     // init the key GPIO
     Key_GPIO_Config();
+#endif
 
     /* Send welcome message on startup. */
     Usart_SendString(DEBUG_USARTx, "\n\r================================\n\r");
@@ -70,10 +83,12 @@ int main(void)
     // check first flash request, the button push, 500ms timeout
     while (!bootloader_window_missed && !flash_request)
     {
+#ifdef embedfire 
         if (Key_Scan(KEY1_GPIO_PORT, KEY1_GPIO_PIN) == KEY_ON)
         {
             flash_request = true;
         }
+#endif
 
         uint32_t system_time_ms = systick_get_tick();
 
@@ -138,10 +153,16 @@ int main(void)
         flash_jump_to_app();
     }
 
+#ifdef embedfire 
     /* Turn off the blue LED, turn on green LED to indicate, that we are in
      * bootloader mode.*/
     LED3(OFF);
     LED2(ON);
+#endif
+
+#ifdef youfang 
+    OLED_ShowString(2, 1, "flashing...");
+#endif
 
     while (1)
     {

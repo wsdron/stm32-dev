@@ -69,7 +69,7 @@ void USART_Config(void)
 
     // 将USART Rx的GPIO配置为浮空输入模式
     GPIO_InitStructure.GPIO_Pin = DEBUG_USART_RX_GPIO_PIN;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
     GPIO_Init(DEBUG_USART_RX_GPIO_PORT, &GPIO_InitStructure);
 
     // 配置串口的工作参数

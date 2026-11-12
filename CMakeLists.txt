@@ -28,7 +28,13 @@ string(TOLOWER "${TARGET_BOARD}" TARGET_BOARD_LOWER)
 if(TARGET_BOARD_LOWER STREQUAL "youfang")
     message(STATUS "Configuring for Youfang board")
     set(STARTUP_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/flash_stm32f103c8t6/startup_stm32f103c8tx.s)
-    set(MCU_LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/flash_stm32f103c8t6/STM32F103C8T6_FLASH.ld)
+
+    if(SOFTWARE STREQUAL "app")
+        set(MCU_LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/flash_stm32f103c8t6/STM32F103C8T6_FLASH.ld)
+    else()
+        set(MCU_LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/flash_stm32f103c8t6/STM32F103C8T6_FLASH_bootloader.ld)
+    endif()
+
     set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT})
     set(TARGET_DEVICE "STM32F10X_MD")
 
@@ -113,6 +119,7 @@ if(NOT TEST_MODE)
             ${CPU_PARAMETERS}
                 -DUSE_STDPERIPH_DRIVER
                 -D${TARGET_DEVICE}
+                -D${TARGET_BOARD_LOWER}
                 -DSTM32F103xE
                 -DUSE_HAL_DRIVER
                 -D${SOFTWARE_FLAG}
@@ -142,6 +149,7 @@ if(NOT TEST_MODE)
         ${CPU_PARAMETERS}
             -DUSE_STDPERIPH_DRIVER
             -D${TARGET_DEVICE}
+            -D${TARGET_BOARD_LOWER}
             -DSTM32F103xE
             -DUSE_HAL_DRIVER
             -D${SOFTWARE_FLAG}
