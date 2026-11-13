@@ -128,7 +128,11 @@ void PendSV_Handler(void) {}
  * @param  None
  * @retval None
  */
-void SysTick_Handler(void) { systick_tick_increment(); }
+void SysTick_Handler(void)
+    {
+        systick_tick_increment();
+        TimingDelay_Decrement();
+    }
 
 void DEBUG_USART_IRQHandler(void)
 {

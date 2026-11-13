@@ -115,6 +115,14 @@ void Car_TransRight(uint16_t Speed)
     Motor4_SetSpeed(1, Speed);
 }
 
+void Car_Stop(void)
+{
+    Motor1_SetSpeed(0, 0);
+    Motor2_SetSpeed(0, 0);
+    Motor3_SetSpeed(0, 0);
+    Motor4_SetSpeed(0, 0);
+}
+
 /*****************************************************/
 //  PA0->TIM2_CH1->MOTOR1A->Backward
 //  PA1->TIM2_CH2->MOTOR1B->Forward

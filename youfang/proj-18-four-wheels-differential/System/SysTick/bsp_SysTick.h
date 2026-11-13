@@ -12,6 +12,7 @@ void SysTick_Delay_Us(__IO uint32_t us);
 void SysTick_Delay_Ms(__IO uint32_t ms);
 
 void systick_tick_increment(void);
+void TimingDelay_Decrement(void);
 uint32_t systick_get_tick(void);
 
 #endif /* __SYSTICK_H */

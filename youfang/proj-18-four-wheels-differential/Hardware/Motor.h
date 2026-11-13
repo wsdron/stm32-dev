@@ -14,4 +14,5 @@ void Motor1_SetSpeed(uint8_t Dir, uint16_t Speed);
 void Motor2_SetSpeed(uint8_t Dir, uint16_t Speed);
 void Motor3_SetSpeed(uint8_t Dir, uint16_t Speed);
 void Motor4_SetSpeed(uint8_t Dir, uint16_t Speed);
+void Car_Stop(void);
 #endif

@@ -1,11 +1,9 @@
 #include "bsp_SysTick.h"
 #include "Motor.h"
 #include "OLED.h"
-#include "key.h"
+#include "command.h"
 #include "bsp_usart.h"
 #include "stm32f10x.h" // Device header
-
-uint8_t Num;
 
 int main(void)
 {
@@ -18,27 +16,10 @@ int main(void)
 
     OLED_Init();
     OLED_ShowString(1, 1, "App running");
+    OLED_ShowString(3, 1,"cmd:");
 
-    Key_Init();
     while (1)
     {
-        Num = Key_GetNum();
-        if (Num == 1)
-        {
-            Car_TurnLeft(500);
-        }
-        else if (Num == 2)
-        {
-            Car_TurnRight(500);
-        }
-        else if (Num == 3)
-        {
-            Car_TransLeft(500);
-        }
-        else if (Num == 4)
-        {
-            Car_TransRight(500);
-        }
 
         static uint32_t system_time = 0u;
         uint32_t system_time_previous = 0u;
@@ -49,8 +30,10 @@ int main(void)
         // check if any uart msg received every 1000ms
         if (!(system_time % 1000u) && (system_time_previous % 1000u))
         {
-            // indicate the status of waiting for flash request
-            Usart_SendString(DEBUG_USARTx, "heart_beat_1sec\r\n");
+            // indicate the status of app software
+            Usart_SendByte(DEBUG_USARTx, 'A');
+
+            //Usart_SendString(DEBUG_USARTx, "heart_beat_1sec\r\n");
 
             char uart_buff[32] = {0};
             uint8_t uart_buff_size = 0u;
@@ -63,6 +46,65 @@ int main(void)
             {
                 OLED_ShowString(2, 1,"empty buffer");
             }
+
+            // vehicle control
+            static vehicle_mode command_prev = vehicle_mode_undefined;
+            vehicle_mode command = vehicle_mode_undefined;
+
+            command = vehicle_command_detection();
+
+            if (command != command_prev)
+            {
+                char clear[12] = "            ";
+                OLED_ShowString(3, 5, clear);
+                char command_str[32] = {0};
+                get_command_value(command, command_str);
+                OLED_ShowString(3, 5, command_str);
+            }
+            command_prev  = command;
+
+            if (vehicle_mode_turn_left == command)
+            {
+                Car_TurnLeft(500);
+            }
+            else if (vehicle_mode_turn_right == command)
+            {
+                Car_TurnRight(500);
+            }
+            else if (vehicle_mode_trans_left == command)
+            {
+                Car_TransLeft(500);
+            }
+            else if (vehicle_mode_trans_right == command)
+            {
+                Car_TransRight(500);
+            }
+            else if (vehicle_mode_stop == command)
+            {
+                Car_Stop();
+            }
+
+
+            // OTA request detection
+            char target[] = "reset";
+
+            // Call the function, passing the string and its length (excluding
+            // the null terminator)
+            bool found = uart_check_contains_flash(target, sizeof(target) - 1);
+
+            if (found)
+            {
+                Car_Stop();
+
+                // Trigger the software reset
+                NVIC_SystemReset();
+            }
+            else
+            {
+                usart_reset_buffer_cursor();
+            }
+
+            usart_reset_buffer_cursor();
         }
     }
 }

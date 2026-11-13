@@ -112,7 +112,7 @@ void usart_append_buffer(char received);
 bool usart_is_buffer_empty(void);
 bool usart_get_buffer(char* temp, uint8_t* size);
 void usart_reset_buffer_cursor(void);
-bool uart_check_contains_flash(char *target_string, uint8_t size_string);
+bool uart_check_contains_flash(const char *target_string, uint8_t size_string);
 
 /* Status report for the functions. */
 typedef enum

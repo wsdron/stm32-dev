@@ -213,7 +213,7 @@ bool usart_get_buffer(char* temp, uint8_t* size)
 void usart_reset_buffer_cursor(void) { buffer_cursor = 0u; }
 
 // check if buffer contains target string (max 30)
-bool uart_check_contains_flash(char *target_string, uint8_t size_string)
+bool uart_check_contains_flash(const char *target_string, uint8_t size_string)
 {
     bool return_val = false;
 
